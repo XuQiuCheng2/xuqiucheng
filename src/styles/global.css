@@ -66,7 +66,7 @@ img:hover {
 	/* 鼠标悬停变彩色 */
 }
 
-/* 基础网格定义 */
+/* 宇宙深蓝网格 */
 body::before {
 	content: "";
 	position: fixed;
@@ -74,19 +74,26 @@ body::before {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	/* 绘制 40px 的网格线 */
+	/* 使用透明度较低的电光蓝 #0066ff */
 	background-image:
-		linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-		linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-	background-size: 40px 40px;
+		linear-gradient(to right, rgba(0, 102, 255, 0.15) 1px, transparent 1px),
+		linear-gradient(to bottom, rgba(0, 102, 255, 0.15) 1px, transparent 1px);
+	background-size: 50px 50px;
+	/* 网格稍微放大一点，更有空间感 */
 	z-index: -1;
 	pointer-events: none;
 	opacity: 0;
-	/* 默认隐藏 */
-	transition: opacity 0.3s ease;
+	transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 当鼠标悬停在文章标题或链接上时，显示网格 */
+/* 悬停触发：网格显现 */
 body:has(a:hover, article:hover)::before {
 	opacity: 1;
+}
+
+/* 进阶效果：给文字悬停加一个淡淡的蓝色发光 */
+a:hover {
+	color: #0066ff !important;
+	text-shadow: 0 0 8px rgba(0, 102, 255, 0.5);
+	transition: all 0.3s ease;
 }
