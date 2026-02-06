@@ -121,3 +121,25 @@ a:hover {
 	text-shadow: 0 0 8px rgba(0, 102, 255, 0.5);
 	transition: all 0.3s ease;
 }
+
+/* 隐藏模板自带的、多余的装饰元素 */
+#main-header {
+	display: none !important;
+}
+
+/* 尝试隐藏原生页眉 */
+footer {
+	display: none !important;
+}
+
+/* 隐藏页脚 */
+.skip-link {
+	display: none !important;
+}
+
+/* 隐藏跳转链接 */
+#theme-toggle {
+	display: none !important;
+}
+
+/* 隐藏那个切换深色模式的按钮 */
