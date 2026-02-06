@@ -1,6 +1,6 @@
 /* 核心工业风定义 */
 :root {
-	--bg-color: #ffee00;
+	--bg-color: #f7ee76;
 	--text-color: #000000;
 	--accent-color: #ff0000;
 	/* 悬停时的亮色 */
@@ -8,14 +8,38 @@
 }
 
 body {
-	background-color: var(--bg-color);
-	color: var(--text-color);
-	/* 灵魂：强制等宽字体 */
-	font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-	line-height: 1.6;
+	background-color: #fcfcfc;
+	color: #000;
+	font-family: 'Menlo', monospace;
 	margin: 0;
-	padding: 2rem;
-	-webkit-font-smoothing: antialiased;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	/* 水平居中 */
+	min-height: 100vh;
+}
+
+.container {
+	width: 90%;
+	max-width: 800px;
+	/* 限制宽度，防止文字拉得太长 */
+	margin-top: 15vh;
+	/* 顶部留出 15% 的空白，显得有呼吸感 */
+}
+
+header {
+	margin-bottom: 5rem;
+	width: 100%;
+}
+
+nav a {
+	margin-right: 2rem;
+	text-transform: uppercase;
+	/* 导航大写，更有工业感 */
+	font-size: 0.8rem;
+	text-decoration: none;
+	color: #666;
 }
 
 /* 去掉所有圆角和阴影 */
