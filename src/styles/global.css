@@ -1,27 +1,67 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* 核心工业风定义 */
+:root {
+	--bg-color: #ffffff;
+	--text-color: #000000;
+	--accent-color: #ff0000;
+	/* 悬停时的亮色 */
+	--border-color: #000000;
+}
 
-@layer base {
-	:root,
-	:root[data-theme="light"] {
-		color-scheme: light;
-		/* https://tailwindcss.com/docs/customizing-colors#using-css-variables */
-		--theme-bg: 0deg 0% 98%;
-		--theme-link: 172deg 18% 41%;
-		--theme-text: 203deg 11% 15%;
-		--theme-accent: 351deg 66% 48%;
-		--theme-accent-2: 0deg 0% 7%;
-		--theme-quote: 351deg 66% 48%;
-	}
+body {
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	/* 灵魂：强制等宽字体 */
+	font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+	line-height: 1.6;
+	margin: 0;
+	padding: 2rem;
+	-webkit-font-smoothing: antialiased;
+}
 
-	:root[data-theme="dark"] {
-		color-scheme: dark;
-		--theme-bg: 210deg 6% 12%;
-		--theme-link: 330deg 49% 67%;
-		--theme-text: 220deg 3% 79%;
-		--theme-accent: 159deg 64% 45%;
-		--theme-accent-2: 0deg 0% 93%;
-		--theme-quote: 102deg 100% 86%;
-	}
+/* 去掉所有圆角和阴影 */
+* {
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+
+/* 导航栏样式：极简清单 */
+nav a {
+	text-decoration: none;
+	color: var(--text-color);
+	border: 1px solid transparent;
+	padding: 4px 8px;
+	margin-right: 10px;
+}
+
+nav a:hover {
+	border: 1px solid var(--border-color);
+	background: var(--text-color);
+	color: var(--bg-color);
+}
+
+/* 作品列表样式：细线分割 */
+article,
+.post-item {
+	border-bottom: 1px solid #ddd;
+	padding: 1rem 0;
+	transition: all 0.2s;
+}
+
+article:hover {
+	padding-left: 10px;
+	border-bottom: 1px solid var(--text-color);
+}
+
+/* 图片处理：干净直角 */
+img {
+	max-width: 100%;
+	filter: grayscale(100%);
+	/* 默认黑白，更有档案感 */
+	transition: filter 0.3s;
+	border: 1px solid #eee;
+}
+
+img:hover {
+	filter: grayscale(0%);
+	/* 鼠标悬停变彩色 */
 }
