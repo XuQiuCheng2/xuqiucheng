@@ -4,6 +4,7 @@ import PostPreview from "@/components/blog/PostPreview.astro";
 import { getAllPosts } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
+import profileImage from "@/assets/images/IMG_1907.png";
 
 export const prerender = true;
 
@@ -22,6 +23,10 @@ const allPostsByDate = allPosts
 		</nav>
 		
 		<div class="vibe-container">
+			<div class="profile-image-wrapper">
+				<img src={profileImage.src} alt="Profile" class="profile-image" />
+			</div>
+			
 			<section class="work-archive" aria-label="Project archive">
 				<ul class="work-list">
 					{
@@ -87,6 +92,20 @@ const allPostsByDate = allPosts
 		margin-left: auto;
 		margin-right: auto;
 		padding: 0;
+	}
+
+	/* 头像容器 */
+	.profile-image-wrapper {
+		text-align: center;
+		margin-bottom: 4rem;
+	}
+
+	.profile-image {
+		width: 300px;
+		height: 300px;
+		object-fit: cover;
+		border-radius: 0;
+		filter: none;
 	}
 
 	.vibe-header {
