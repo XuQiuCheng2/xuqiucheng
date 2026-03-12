@@ -14,41 +14,89 @@ const allPostsByDate = allPosts
 ---
 
 <PageLayout meta={{ title: "HOME" }}>
-	<div class="vibe-container">
-		<header class="vibe-header">
-			<h1 class="my-name">XU QIU CHENG</h1>
-			<p class="my-tagline">New Media Artist / Researcher</p>
-		</header>
+	<div class="page-layout">
+		<nav class="left-nav">
+			<a href="/">WORKS</a>
+			<a href="/about">ABOUT</a>
+			<a href="mailto:bluedehua@gmail.com">CONTACT</a>
+		</nav>
+		
+		<div class="vibe-container">
+			<header class="vibe-header">
+				<h1 class="my-name">XU QIU CHENG</h1>
+				<p class="my-tagline">New Media Artist / Researcher</p>
+			</header>
 
-		<section class="work-archive" aria-label="Project archive">
-			<ul class="work-list">
-				{
-					allPostsByDate.map((p) => (
-						<li class="work-item">
-							<a href={`/posts/${p.id}/`}>
-								<span class="work-date">{p.data.publishDate.getFullYear()}</span>
-								<span class="work-title">{p.data.title}</span>
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</section>
+			<section class="work-archive" aria-label="Project archive">
+				<ul class="work-list">
+					{
+						allPostsByDate.map((p) => (
+							<li class="work-item">
+								<a href={`/posts/${p.id}/`}>
+									<span class="work-date">{p.data.publishDate.getFullYear()}</span>
+									<span class="work-title">{p.data.title}</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</div>
 	</div>
 </PageLayout>
 
 <style>
+	/* 页面布局：左侧导航 + 右侧内容 */
+	.page-layout {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4rem;
+		min-height: 100vh;
+		margin-top: -10vh;
+		padding: 0 2rem;
+	}
+
+	/* 左侧导航栏 */
+	.left-nav {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		position: fixed;
+		left: 5%;
+		top: 50%;
+		transform: translateY(-50%);
+		z-index: 40;
+	}
+
+	.left-nav a {
+		text-decoration: none;
+		color: #000;
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		transition: all 0.3s ease;
+		border: 1px solid transparent;
+		padding: 0.5rem 0;
+	}
+
+	.left-nav a:hover {
+		color: #0066ff;
+		text-shadow: 0 0 8px rgba(0, 102, 255, 0.5);
+	}
+
 	/* 这里的样式只针对首页，不会污染全局 */
 	.vibe-container {
-		margin-top: 15vh;
-		max-width: 900px;
+		margin-top: 0;
+		max-width: 700px;
 		margin-left: auto;
 		margin-right: auto;
-		padding: 0 2rem;
+		padding: 0;
 	}
 
 	.vibe-header {
 		margin-bottom: 8rem;
+		text-align: center;
 	}
 
 	.my-name {
@@ -110,12 +158,28 @@ const allPostsByDate = allPosts
 	}
 
 	/* 适配手机屏幕 */
-	@media (max-width: 640px) {
+	@media (max-width: 768px) {
+		.page-layout {
+			flex-direction: column;
+			gap: 2rem;
+		}
+
+		.left-nav {
+			position: static;
+			flex-direction: row;
+			transform: none;
+			top: auto;
+			left: auto;
+			margin-bottom: 2rem;
+			justify-content: center;
+		}
+
 		.work-title {
 			font-size: 1.5rem;
 		}
-		.vibe-container {
-			margin-top: 5vh;
+
+		.vibe-header {
+			text-align: center;
 		}
 	}
 </style>
