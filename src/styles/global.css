@@ -145,47 +145,33 @@ footer {
 /* 隐藏那个切换深色模式的按钮 */
 
 /* 1. 彻底隐藏 Skip to content */
-.skip-link, 
+.skip-link,
 [href="#main-content"],
 .sr-only {
-  display: none !important;
-  visibility: hidden !important;
+	display: none !important;
+	visibility: hidden !important;
 }
 
 /* 2. 整体布局上移 */
 .vibe-container {
-  margin-top: 8vh !important; /* 从 15vh 缩减到 8vh，让内容整体往上提 */
+	margin-top: 8vh !important;
+	/* 从 15vh 缩减到 8vh，让内容整体往上提 */
 }
 
 /* 3. 标题尺寸微调：让它更精致（小一点） */
 .work-title {
-  font-size: 1.4rem !important; /* 原本是 2rem，现在调小，更有档案感 */
-  letter-spacing: 0.02em;
+	font-size: 1.4rem !important;
+	/* 原本是 2rem，现在调小，更有档案感 */
+	letter-spacing: 0.02em;
 }
 
 /* 4. 调整作品行高和间距，让列表更紧凑 */
 .work-item a {
-  padding: 1.2rem 0 !important; /* 缩减上下间距 */
+	padding: 1.2rem 0 !important;
+	/* 缩减上下间距 */
 }
 
 .vibe-header {
-  margin-bottom: 4rem !important; /* 名字和列表之间的距离也缩减 */
-}
-
-/* 导航容器：竖排排列并居中 */
-.minimal-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.minimal-nav a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
+	margin-bottom: 4rem !important;
+	/* 名字和列表之间的距离也缩减 */
 }
