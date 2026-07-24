@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XU QIUCHENG 徐秋成</title>
+<style>
+  :root{
+    --ink:#111;
+    --ghost:#999;
+    --line:#e5e5e5;
+    --bg:#fff;
+    --hl:#0000ee;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:"Helvetica Neue",Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+    font-size:13px;
+    line-height:1.7;
+    color:var(--ink);
+    background:var(--bg);
+  }
+  a{color:inherit;text-decoration:none;}
+  a:hover{color:var(--hl);}
+  .desc a{color:var(--hl);}
+
+  .wrap{display:flex;min-height:100vh;}
+  nav{
+    width:250px;
+    flex-shrink:0;
+    padding:40px 24px;
+    position:fixed;
+    height:100vh;
+    overflow-y:auto;
+  }
+  main{
+    margin-left:250px;
+    flex:1;
+    padding:40px 48px 80px;
+    max-width:980px;
+  }
+
+  /* ---------- nav ---------- */
+  .site-title{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.08em;
+    margin-bottom:28px;
+    display:block;
+  }
+  .nav-main{margin-bottom:28px;}
+  nav li{list-style:none;}
+  nav li a{
+    display:block;
+    padding:1px 0;
+    letter-spacing:.06em;
+  }
+  nav li a.active{color:var(--hl);}
+  .nav-label{
+    color:var(--ghost);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+
+  /* ---------- pages ---------- */
+  .page{display:none;}
+  .page.on{display:block;}
+
+  .page h1{font-size:13px;font-weight:700;margin-bottom:2px;}
+  .meta{color:var(--ghost);margin-bottom:24px;white-space:pre-line;}
+  .desc{max-width:600px;margin-bottom:32px;white-space:pre-line;}
+
+  /* ---------- home ---------- */
+  #home.page.on{
+    display:flex;
+    min-height:calc(100vh - 120px);
+    align-items:center;
+  }
+  .home-name .en{
+    font-size:34px;
+    font-weight:700;
+    letter-spacing:.12em;
+    line-height:1.3;
+  }
+  .home-name .zh{
+    font-size:26px;
+    font-weight:400;
+    letter-spacing:.5em;
+    margin-top:6px;
+  }
+  .home-name .role{
+    margin-top:20px;
+    color:var(--ghost);
+    letter-spacing:.06em;
+  }
+
+  /* ---------- media ---------- */
+  .media{margin-bottom:28px;}
+  .media img{
+    width:100%;
+    height:auto;
+    display:block;
+    background:#f2f2f2;
+  }
+  .cap{color:var(--ghost);font-size:11px;margin-top:6px;}
+  .media-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .video{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+    margin-bottom:28px;
+  }
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+  /* ---------- list pages ---------- */
+  .list-block{margin-bottom:28px;max-width:660px;}
+  .list-block h2{
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ghost);
+    margin-bottom:8px;
+  }
+  .row{display:flex;gap:16px;padding:2px 0;}
+  .row .year{color:var(--ghost);flex-shrink:0;width:44px;}
+
+  /* ---------- mobile ---------- */
+  @media (max-width:720px){
+    nav{position:static;width:100%;height:auto;padding:24px 20px 8px;}
+    main{margin-left:0;padding:16px 20px 60px;}
+    .wrap{flex-direction:column;}
+    .media-row{grid-template-columns:1fr;}
+    #home.page.on{min-height:50vh;}
+    .home-name .en{font-size:26px;}
+    .home-name .zh{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <a href="#home" class="site-title" data-page="home">XU QIUCHENG</a>
+
+  <ul class="nav-main">
+    <li><a href="#news" data-page="news">NEWS</a></li>
+    <li><a href="#cv" data-page="cv">CV</a></li>
+    <li><a href="#press" data-page="press">PRESS</a></li>
+    <li><a href="#word" data-page="word">WORD</a></li>
+  </ul>
+
+  <div class="nav-label">Works</div>
+  <ul>
+    <li><a href="#ripples" data-page="ripples">さざ波：200年後の大地震</a></li>
+    <li><a href="#pbd" data-page="pbd">ペイル・ブルー・ドット</a></li>
+    <li><a href="#saitama" data-page="saitama">夢をみる、さいたま</a></li>
+    <li><a href="#spaceship" data-page="spaceship">宇宙船イン・ビトゥイーン号の窓</a></li>
+    <li><a href="#burning" data-page="burning">燃える心</a></li>
+    <li><a href="#boar" data-page="boar">イノシシの心</a></li>
+    <li><a href="#perf" data-page="perf">身体と音声によるパフォーマンス</a></li>
+    <li><a href="#yomi" data-page="yomi">黄泉の旅</a></li>
+    <li><a href="#meisen" data-page="meisen">冥銭とビットコイン</a></li>
+    <li><a href="#stuffed" data-page="stuffed">人間が大嫌いなぬいぐるみ</a></li>
+    <li><a href="#dream" data-page="dream">暁闇の夢</a></li>
+    <li><a href="#picnic" data-page="picnic">ピクニック</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ============ HOME ============ -->
+  <section class="page on" id="home">
+    <div class="home-name">
+      <div class="en">XU QIUCHENG</div>
+      <div class="zh">徐秋成</div>
+      <div class="role">Media artist / Performer — Tokyo</div>
+    </div>
+  </section>
+
+  <!-- ============ NEWS ============ -->
+  <section class="page" id="news">
+    <h1>NEWS</h1>
+    <div class="meta">Recent and upcoming</div>
+    <div class="list-block">
+      <div class="row"><span class="year">2025</span><span>「夢をみる、さいたま、仮に」2025年度さいたま文化発信プロジェクト選出、大宮盆栽美術館にて展示</span></div>
+      <div class="row"><span class="year">2025</span><span>BugArtAward ファイナリスト展</span></div>
+      <div class="row"><span class="year">2025</span><span>チェルフィッチュ『宇宙船イン・ビトゥイーン号の窓』日本国内ツアー（三重、熊本、豊岡演劇祭）</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CV ============ -->
+  <section class="page" id="cv">
+    <h1>XU QIUCHENG 徐秋成（ジョ・チウチェン）</h1>
+    <div class="meta">Media artist / Performer — Tokyo</div>
+    <p class="desc">メディアアーティスト、舞台俳優。東京藝術大学美術学部先端芸術表現科 教育研究助手。アウトサイダーの記憶、ポストメモリー、夢と睡眠、仮想空間と死後の世界、社会的に規制されたシステムとしての身体をテーマに、映像インスタレーション、ゲームエンジンを用いた作品、舞台パフォーマンスを横断して制作を行う。
+
+Media artist and stage performer based in Tokyo. His practice spans video installation, game-engine-based work, and stage performance, exploring outsider memory, postmemory, dreams and sleep, virtual space and the afterlife, and the body as a socially regulated system.</p>
+
+    <div class="list-block">
+      <h2>経歴</h2>
+      <div class="row"><span class="year">1993</span><span>中国河南省生まれ</span></div>
+      <div class="row"><span class="year">2017</span><span>来日</span></div>
+      <div class="row"><span class="year">2019</span><span>多摩美術大学情報デザイン学科メディア芸術コースに入学</span></div>
+      <div class="row"><span class="year">2023</span><span>東京藝術大学大学院美術研究科先端芸術表現専攻</span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>受賞歴</h2>
+      <div class="row"><span class="year">2021</span><span>多摩美術大学校友会奨学金</span></div>
+      <div class="row"><span class="year">2023</span><span>多摩美術大学卒業制作優秀賞</span></div>
+      <div class="row"><span class="year">2023</span><span>アジアデジタルアート 2023 大賞 / 文部科学大臣賞</span></div>
+      <div class="row"><span class="year">2023</span><span>東京藝大アートフェス 2023 佳作</span></div>
+      <div class="row"><span class="year">2024</span><span>空想するさいたまデジタルプラン第 1 位</span></div>
+      <div class="row"><span class="year">2025</span><span>BugArtAward ファイナリスト</span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>展示</h2>
+      <div class="row"><span class="year">2022</span><span>学生映画祭（東京・立川）</span></div>
+      <div class="row"><span class="year">2023</span><span>夢の火山（東京・日暮里）</span></div>
+      <div class="row"><span class="year">2023</span><span>渋谷 Parco GalleryX（東京）</span></div>
+      <div class="row"><span class="year">2024</span><span>アジアデジタルアート 2023 大賞展（福岡市美術館）</span></div>
+      <div class="row"><span class="year">2025</span><span>BugArtAward ファイナリスト展</span></div>
+      <div class="row"><span class="year">2025</span><span>さいたま文化発信プロジェクト（大宮盆栽美術館）</span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>出演作品</h2>
+      <div class="row"><span class="year">2023</span><span>『宇宙船イン・ビトゥイーン号の窓』（チェルフィッチュ）東京吉祥寺シアター、京都国際舞台芸術祭、中国烏鎮演劇祭</span></div>
+      <div class="row"><span class="year">2024</span><span>同ツアー：ベルギー・ブリュッセル「クンステン・フェスティバル・デザール」、韓国ソウル「MMCA」、フランス・パリ「Festival d'automne」</span></div>
+      <div class="row"><span class="year">2025</span><span>同 日本国内ツアー：三重、熊本、豊岡演劇祭</span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>ワークショップ</h2>
+      <div class="row"><span class="year">2021–23</span><span>アピチャッポン・ウィーラセタクンのワークショップに三年連続参加（塩田千春との合同授業を含む）</span></div>
+      <div class="row"><span class="year">2021</span><span>チェルフィッチュ 日本語を使った演劇ワークショップ 2</span></div>
+      <div class="row"><span class="year">2022</span><span>ベルリン：多摩美術大学（笠原恵美子、久保田晃弘）× ベルリン芸術大学（UdK）共同ワークショップ</span></div>
+      <div class="row"><span class="year">2023</span><span>韓国光州ビエンナーレ × ソウル国立大学彫刻学科 共同ワークショップ</span></div>
+      <div class="row"><span class="year">2024</span><span>MOT アーティスト ホー・ツーニェンのワークショップ</span></div>
+      <div class="row"><span class="year">2024</span><span>GAP 相馬千秋とウズベキスタン 4 都市でのリサーチワークショップ</span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>Contact</h2>
+      <div class="row"><span>Email: [your@email] / Instagram: [@handle]</span></div>
+    </div>
+  </section>
+
+  <!-- ============ PRESS ============ -->
+  <section class="page" id="press">
+    <h1>PRESS</h1>
+    <div class="meta">Interviews, reviews, features</div>
+    <div class="list-block">
+      <div class="row"><span class="year">2023</span><span><a href="https://reurl.cc/9RYqqn" target="_blank" rel="noopener">The Japan Times "Chelfitsch challenges Japanese theater's language barriers"（2023.9.29）</a></span></div>
+      <div class="row"><span class="year">2023</span><span>朝日新聞 文芸時評（吉川浩満、2023.9.29）</span></div>
+      <div class="row"><span class="year">2023</span><span>新潮 2023年10月号 蓮實重彦「午後の朝鮮薊」演目誌批評</span></div>
+      <div class="row"><span class="year">2023</span><span>中国烏鎮演劇祭にてインタビュー</span></div>
+    </div>
+  </section>
+
+  <!-- ============ WORD ============ -->
+  <section class="page" id="word">
+    <h1>WORD</h1>
+    <div class="meta">Texts, statements, writing</div>
+    <p class="desc">　日本に来て八年。最初に日本語を喋る時、自分の考えや感情を十分に伝えきれない不自由さを感じる一方で、私はある種の「自由」も感じていた。その「自由」はおそらく、言葉の意味や深みが分からないからこそ感じた「想像の自由」だった。ある意味で、私が自分の想像力によってバーチャル空間と呼べるものを作ったのかもしれない。そのような空間で、ここに来る前の前の前のこと、これから先の先の先のことを考え続けている。私が感じている直線的な時間の流れではなく、繰り返され、乱れ、交差し、ときには層をなして重なり合う時間のように、たくさんのリアリティも存在する。そのようなことを思い出しつつ、今あなたが読んでいるこの文章を書いた。</p>
+  </section>
+
+  <!-- ============ RIPPLES ============ -->
+  <section class="page" id="ripples">
+    <h1>RIPPLES: The Great Earthquake – 200 Years Later　さざ波：200年後の大地震</h1>
+    <div class="meta">Unity、Blender / 4K / 16min / 2025.01
+監督・脚本・編集・キャラクターデザイン・モデリング・モーションキャプチャー：徐秋成
+エンディングソング：Koki Sakakihara　サウンドデザイン・ミキシング：Ho Tsz Yeung　英訳：Robert Zetzsche</div>
+    <div class="media"><img src="images/ripples-main.jpg" alt="RIPPLES main still"></div>
+    <p class="desc">　この映像作品は「ポストメモリー」をテーマに、ゲームエンジンを用いて制作した。
+
+　映像は、日本の「国生み」神話から始まり、人類の宇宙移住、地球外生命体への進化へと至る。そして物語は終盤から、過去へ遡るように、地球外生命体となった人類の末裔たちが、初めてこの星に降り立った祖先の神話を手がかりに、かつての地球を想像し、高度なテクノロジーによってその世界をシミュレートしようとする。その二つの時間軸の交差点に、「私」が存在している。</p>
+    <div class="media-row">
+      <div class="media"><img src="images/ripples-01.jpg" alt="RIPPLES excerpt 1"></div>
+      <div class="media"><img src="images/ripples-02.jpg" alt="RIPPLES excerpt 2"></div>
+    </div>
+    <div class="media"><img src="images/ripples-doodle.jpg" alt="iPad drawing" style="max-width:380px"><div class="cap">iPad で描いた落書き</div></div>
+  </section>
+
+  <!-- ============ PALE BLUE DOT ============ -->
+  <section class="page" id="pbd">
+    <h1>ペイル・ブルー・ドット　Pale Blue Dot</h1>
+    <div class="meta">Unity、Blender / 4K / 7min48s / 2024.08
+東京藝大アートフェス 2023 佳作</div>
+    <div class="media"><img src="images/pbd-main.jpg" alt="Pale Blue Dot main still"></div>
+    <p class="desc">　東京藝術大学の G7「世界平和」をテーマにして制作した映像作品。ゲームエンジンを用いて、デジタル世界で自分のアバターが銃殺され、魂が宇宙に漂うという死の体験をシミュレートした。
+
+　『ペイル・ブルー・ドット』は、薄暗い青色の点を指し、これは地球から最も遠くの場所から撮影された地球の写真である。写真の中で、地球は暗闇の宇宙に浮かぶひとつの小さな粒にすぎない。
+
+　普段、慣習となって、もはや意識しようもない、何らかの「儀礼」によって記憶が抑圧される。よそものになってしまうことが多い。自分に真摯に向き合うことで、自分自身を感じることができる。その気持ちは、初めてペイル・ブルー・ドットの写真を見たときを思い出した。</p>
+    <div class="video"><iframe src="https://www.youtube.com/embed/bYJyb-0Fnwk" title="Pale Blue Dot" allowfullscreen loading="lazy"></iframe></div>
+    <div class="media-row">
+      <div class="media"><img src="images/pbd-01.jpg" alt="Pale Blue Dot excerpt 1"></div>
+      <div class="media"><img src="images/pbd-02.jpg" alt="Pale Blue Dot excerpt 2"></div>
+    </div>
+  </section>
+
+  <!-- ============ SAITAMA ============ -->
+  <section class="page" id="saitama">
+    <h1>夢をみる、さいたま（仮）　Dreaming, Saitama</h1>
+    <div class="meta">Unity、Blender / VR / 2024.01–
+さいたま文化発信プロジェクト（アーツカウンシルさいたま × 東京藝術大学）「空想するさいたま」デジタルコンテンツプラン第一位
+2025年度さいたま文化発信プロジェクト選出、大宮盆栽美術館にて展示</div>
+    <div class="media"><img src="images/saitama-main.jpg" alt="Dreaming Saitama main still"></div>
+    <p class="desc">　生活都市、ベッドタウンにおいて、最も重要なのは睡眠であること。
+
+　人間が睡眠のなかで夢を見てる時が一番自由が感じられると言われ、日常からかけ離れた大胆かつ不思議なイメージが溢れ出す。それは現実だけではなく、歴史や記憶、民話から影響を受けている。
+
+　本作は睡眠の深さによって、4 段階に分けられる。それぞれの段階とさいたまを代表とする盆栽、人形、漫画、鉄道を結びつけ、夢のなかにしかない面白さや大胆さを表現する。</p>
+    <div class="media"><img src="images/saitama-01.jpg" alt="Dreaming Saitama pigeons"></div>
+  </section>
+
+  <!-- ============ SPACESHIP ============ -->
+  <section class="page" id="spaceship">
+    <h1>宇宙船イン・ビトゥイーン号の窓　The Window of Spaceship 'In-Between'</h1>
+    <div class="meta">チェルフィッチュ（作・演出：岡田利規）／出演
+2023　東京吉祥寺シアター、京都国際舞台芸術祭 KYOTO EXPERIMENT、中国烏鎮演劇祭
+2024　ベルギー・ブリュッセル「クンステン・フェスティバル・デザール」、韓国ソウル「MMCA」、フランス・パリ「Festival d'automne」
+2025　日本国内ツアー：三重、熊本、豊岡演劇祭</div>
+    <div class="media"><img src="images/spaceship-main.jpg" alt="The Window of Spaceship In-Between stage photo"></div>
+    <p class="desc">　日本語を母語としない俳優との創作がひらく「演劇と言語」の未来。いくつものリアリティが交差する、まだ見ぬ SF 演劇。
+
+　重大なミッションを果たすべく、イン・ビトゥイーン号が、四人の乗組員と一体のアンドロイドを載せて、宇宙を漂泊しています――
+
+　『宇宙船イン・ビトゥイーン号の窓』は、「日本語を母語としない俳優が日本語で演じる演劇」と聞いて多くの人がイメージするとおぼしきもの、とはおよそ異なるすがた・かたち・はたらきを備えた演劇作品です。（岡田利規、ホームページより）</p>
+    <div class="media-row">
+      <div class="media"><img src="images/spaceship-01.jpg" alt="Stage photo"><div class="cap">京都国際舞台芸術祭 KYOTO EXPERIMENT　撮影＝井上嘉和</div></div>
+      <div class="media"><img src="images/spaceship-02.jpg" alt="Wuzhen Theatre Festival"><div class="cap">中国烏鎮演劇祭</div></div>
+    </div>
+  </section>
+
+  <!-- ============ BURNING ============ -->
+  <section class="page" id="burning">
+    <h1>燃える心　Burning with Heart</h1>
+    <div class="meta">Unity、Blender / LED ビデオインスタレーション サイズ：3×7m / 4K / 7min48s / 2023.01
+多摩美術大学 2023 年優秀卒業制作
+2023 アジアデジタルアート大賞展 FUKUOKA 大賞・文部科学大臣賞</div>
+    <div class="media"><img src="images/burning-main.jpg" alt="Burning with Heart installation view"></div>
+    <p class="desc">　この作品は私が記録した沢山の夢からいくつか印象深いシーンをピックアップして、一つの映像を制作しました。
+
+　夢のなかにあるビジョンを逆算し、目覚めているときに隠した切実な願望や不安の背後に潜んだ原因は一体なんなんだろうと考えながら、自分の心の中にあるモヤモヤしたことを分析しようと思いました。
+
+　タイトル《燃える心》はソビエトのゴーリキー『イゼルギリ婆さん』の挿話からインスパイアされたものです。他の人を助けようという願望とできないという現実の結果である自己犠牲の複雑な心境を表現したかったのです。</p>
+    <div class="video"><iframe src="https://www.youtube.com/embed/dX3MuhaP5nU" title="Burning with Heart" allowfullscreen loading="lazy"></iframe></div>
+    <div class="media-row">
+      <div class="media"><img src="images/burning-02.jpg" alt="Burning with Heart excerpt 1"></div>
+      <div class="media"><img src="images/burning-03.jpg" alt="Burning with Heart excerpt 2"></div>
+    </div>
+  </section>
+
+  <!-- ============ BOAR ============ -->
+  <section class="page" id="boar">
+    <h1>イノシシの心</h1>
+    <div class="meta">Unity、Blender / 4min / 2021.12</div>
+    <div class="media"><img src="images/boar-main.jpg" alt="イノシシの心 main still"></div>
+    <p class="desc">“ 私が寝ている間に、一匹のイノシシが私の胸を裂いて、飛び出した。”
+
+　魂呼ばいとは、死の前後に行う招魂呪術だ。解離性障害とは、現代精神疾患の一つであり、意識や記憶などに関する感覚をまとめる能力が一時的に失われた状態だ。日常における解離状態も沢山ある。つまり、自己の通常の状態から離脱を契機とする。
+
+　寝ている間に体から出てきた魂が、自分の頭にあった記憶の世界で走り回って、一つ一つの断片が何かによって整理され、繋げられ、夢となった。夢は記憶であり、自分の心の中にある動機に基づいて、記憶に意味を見出し、整理しようとすることしかできない。その漠然とした夢を再現しようと思い、この作品を作った。</p>
+    <div class="video"><iframe src="https://www.youtube.com/embed/MTm8EeByZZs" title="イノシシの心" allowfullscreen loading="lazy"></iframe></div>
+    <div class="media-row">
+      <div class="media"><img src="images/boar-01.jpg" alt="映像の抜粋 1"></div>
+      <div class="media"><img src="images/boar-02.jpg" alt="映像の抜粋 2"></div>
+    </div>
+    <div class="media"><img src="images/boar-conte.jpg" alt="絵コンテ" style="max-width:449px"><div class="cap">製作中の絵コンテ</div></div>
+  </section>
+
+  <!-- ============ PERFORMANCE ============ -->
+  <section class="page" id="perf">
+    <h1>身体と音声によるパフォーマンス</h1>
+    <div class="meta">パフォーマンス / 3min / 2021.01 / 多摩美術大学 A Hall</div>
+    <div class="media"><img src="images/perf-main.jpg" alt="Performance photo"></div>
+    <p class="desc">　本作は、山川冬樹先生のパフォーマンスアートの授業で、私が地元の方言から抽出した音節の音と、地元のおばあちゃんたちが喧嘩する時の体の振る舞いから抽出した姿勢の関係性について作った作品。私は 17 歳までずっと田舎に住んでいて、方言しか話さない生活を送っていた。北京に行ったとき、標準中国語さえ話せなかったため、言葉の中に潜んでいる権力性や暴力性を感じた。
+
+　中国の SNS では、農村のおばあちゃんたちが喧嘩する時の体の振る舞いの動画が流行った時期があった。それを見ながら、大笑いする人がたくさんいるが、私は子供の頃から街中でおばあちゃんたちが喧嘩する風景をよく目にしてきた。実はそれは悲しいことなのだ。農村の女性は常に多重の抑圧を受けているが、自分の怒りを表すことは難しく、自分が無意識に自分を叩く、ある意味の自傷行為でもある。
+
+　私は標準語が話せないため、差別を受けたことがある。標準語が良いと言われているが、私は方言の中に意思がない本能的な音節のようなものは、とても原始的な力が感じられ、感情の起伏もはっきりしていた。怖いと思う人もいるが、私はスッキリとした気持ちになり、このパフォーマンスをした。</p>
+  </section>
+
+  <!-- ============ YOMI ============ -->
+  <section class="page" id="yomi">
+    <h1>黄泉の旅</h1>
+    <div class="meta">ビデオインスタレーション / Unity、紙粘土など / 5min / 2021.07
+多摩美校友会奨学金</div>
+    <div class="media"><img src="images/yomi-main.jpg" alt="黄泉の旅 main still"></div>
+    <p class="desc">“ 死に対する印象は人間が生まれる前に子宮にいた頃の記憶でしょうか ”
+
+　私がよくみた夢の一つは、色や形がないため、とても柔らかく、薄い明るい色に満たされ、心地よい温度で包まれて、羊水の中にいるような感じの夢である。
+
+　中国の古代のお墓の形は、母の胎内（子宮）を意識して作られているとも言われている。子宮から生まれ、子宮に還る、再生を祈るシンボルである。つまり、死後の世界への想像は、生まれる前に子宮にいたときの感覚であるかもしれない。
+
+　死に対する解釈には、それぞれの地域の政治や宗教などの社会面も反映されている。副葬品の立体彫刻とゲームエンジンで作った映像を組み合わせることで、生まれる前の世界と死後の世界を繋ぐ。個人の存在とその個人が置かれた環境との関係を探究したいと考え本作品を制作した。</p>
+    <div class="media-row">
+      <div class="media"><img src="images/yomi-01.jpg" alt="展示風景"><div class="cap">展示風景</div></div>
+      <div class="media"><img src="images/yomi-02.jpg" alt="制作風景"><div class="cap">制作風景</div></div>
+    </div>
+  </section>
+
+  <!-- ============ MEISEN ============ -->
+  <section class="page" id="meisen">
+    <h1>冥銭とビットコイン</h1>
+    <div class="meta">インスタレーション / Procreate / 2020.12</div>
+    <div class="media"><img src="images/meisen-main.jpg" alt="冥銭とビットコイン"></div>
+    <p class="desc">“ 葬式を通じて、死後世界への想いから幸せと自由への願いを感じた ”
+
+　冥銭とは中華圏の副葬品のひとつであり、金銭、または金銭を模した物のことである。火で燃やされたあと、死後の世界で通用する通貨となって、死者があの世で幸せな人生を送れるようにするために副葬される。ビットコインは、インターネット時代の産物であり、純粋な P2P 電子マネーによって、金融機関を通さない、直接なオンライン取引が可能である。
+
+　蝋燭を灯し、爆竹を使い、一連の神秘的な儀式を行うことで死後の世界に冥銭を送るやり方に対し、ビットコインは複雑な暗号技術をベースにしている。これらの 2 つの異なるアプローチは、すなわち、それぞれの時代の特徴とその時代の求めるものを示している。</p>
+    <div class="media"><img src="images/meisen-01.jpg" alt="展示風景" style="max-width:332px"><div class="cap">展示風景</div></div>
+  </section>
+
+  <!-- ============ STUFFED ============ -->
+  <section class="page" id="stuffed">
+    <h1>人間が大嫌いなぬいぐるみ　Stuffed animals that hate humans</h1>
+    <div class="meta">ぬいぐるみ、Arduino、足の模型 / 2020.06</div>
+    <div class="media"><img src="images/stuffed-main.jpg" alt="Stuffed animals that hate humans"></div>
+    <p class="desc">　弱い立場にいる人が常に客体化されている。むりやり人間の足を付けられたこのぬいぐるみは、人間のことが嫌いになってしまった。人間に対するトラウマを持つようになり、近寄ると逃げるようになった。
+
+観客の感想：
+“ 撫でようとすると倒れてでも人間を拒絶するぬいぐるみの姿を見て、なんだか胸が痛くなりました。”
+“ 本来何も言わずにいつでも人を癒し肯定し従ってくれるはずのぬいぐるみが社会的な弱者に似てると感じ。拒絶反応を見せることによって、己の中にある「自分と言葉が通じない者や自分より弱い者に対して都合のいいように解釈したり、あたかも正当性があるような理屈を並べて何かを強要したり酷く扱ったりすること。」に気づかせる作品だと思います。”</p>
+    <div class="video"><iframe src="https://www.youtube.com/embed/1vYlBgoUMDw" title="Stuffed animals that hate humans" allowfullscreen loading="lazy"></iframe></div>
+    <div class="media"><img src="images/stuffed-01.jpg" alt="映像の抜粋"></div>
+  </section>
+
+  <!-- ============ DREAM ============ -->
+  <section class="page" id="dream">
+    <h1>《暁闇の夢》及び子供時代の一連ドローイング</h1>
+    <div class="meta">ビデオインスタレーション / ドローイング、油絵、立体、iPhone で流す映像（30s）/ 2020.02</div>
+    <div class="media"><img src="images/dream-main.jpg" alt="暁闇の夢 installation view"></div>
+    <p class="desc">　本作品は、無数の夢の瞬間を記録し、その夢を見た原因を絵やドローイング、立体、映像で表現している。
+
+　壁に設置された iPhone では、自分が夢みる直前を 30 秒の映像作品にしたものを上映している。自分自身の感覚を表現する試みである。
+
+　子供の時見た夢を、今でもたまに見ている。夢の世界で自分の内部に隠れていた、あらゆる抑圧された行為や切実な感情が溢れ出す。それを様々な素材で可視化することで、今の自分がかつていた環境を直視する。</p>
+    <div class="video"><iframe src="https://www.youtube.com/embed/HmycYmWQR4o" title="暁闇の夢" allowfullscreen loading="lazy"></iframe></div>
+  </section>
+
+  <!-- ============ PICNIC ============ -->
+  <section class="page" id="picnic">
+    <h1>ピクニック</h1>
+    <div class="meta">インスタレーション / iMac 4 台、レンガ / 2019.08</div>
+    <div class="media"><img src="images/picnic-main.jpg" alt="ピクニック 展示風景"><div class="cap">展示風景</div></div>
+    <p class="desc">　この作品は、私が夏休みに帰国した際に、幼馴染が働いている都市へ行き、一人一人と一緒に数日共同生活をし、彼らの現場を実体験した映像作品だ。
+
+　4 つの画面には、同じお菓子を食べている 4 人の幼馴染の映像が流れている。出稼ぎの為に、沿海部の都市に住む 4 人の友人は、それぞれ異なる空間で、同じお菓子を無言で食べ続ける。
+
+　中国の経済力や存在感が急速に強くなった一方で、国内の貧富の格差が非常に高まった。その中で、中国の戸籍制度によって、人間が自由に移動することができなく、都市部と農村部の人の収入格差が人為的に作られたと言われた。
+
+　私の実感としては、普段の生活で接触する同じ国の人々に格差を強く感じた。私の出身地と同じような農村部出身の労働者だが、安価な労働力として、中国社会には見えないような存在である。
+
+　その分裂のなかに、何かが存在していると思いつつ、映像を用いて再びピクニックを行った。</p>
+    <div class="media"><img src="images/picnic-01.jpg" alt="映像の抜粋"></div>
+  </section>
+
+</main>
+</div>
+
+<script>
+  const links = document.querySelectorAll('nav a[data-page]');
+  const pages = document.querySelectorAll('.page');
+
+  function show(id){
+    pages.forEach(p => p.classList.toggle('on', p.id === id));
+    links.forEach(a => a.classList.toggle('active', a.dataset.page === id));
+    window.scrollTo(0,0);
+  }
+
+  links.forEach(a => a.addEventListener('click', () => show(a.dataset.page)));
+
+  const hash = location.hash.replace('#','');
+  if(hash && document.getElementById(hash)) show(hash);
+  else show('home');
+</script>
+</body>
+</html>
