@@ -26,7 +26,7 @@
 
   .wrap{display:flex;min-height:100vh;}
   nav{
-    width:250px;
+    width:180px;
     flex-shrink:0;
     padding:40px 24px;
     position:fixed;
@@ -34,7 +34,7 @@
     overflow-y:auto;
   }
   main{
-    margin-left:250px;
+    margin-left:180px;
     flex:1;
     padding:40px 48px 80px;
     max-width:980px;
@@ -73,28 +73,44 @@
   .desc{max-width:600px;margin-bottom:32px;white-space:pre-line;}
 
   /* ---------- home ---------- */
-  #home.page.on{
-    display:flex;
-    min-height:calc(100vh - 120px);
-    align-items:center;
-  }
+  .home-name{margin-bottom:40px;}
   .home-name .en{
-    font-size:34px;
+    font-size:28px;
     font-weight:700;
     letter-spacing:.12em;
     line-height:1.3;
   }
   .home-name .zh{
-    font-size:26px;
+    font-size:20px;
     font-weight:400;
     letter-spacing:.5em;
-    margin-top:6px;
+    margin-top:4px;
   }
   .home-name .role{
-    margin-top:20px;
+    margin-top:10px;
     color:var(--ghost);
     letter-spacing:.06em;
   }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px 16px;
+  }
+  .thumb{display:block;}
+  .thumb img{
+    width:100%;
+    aspect-ratio:3/2;
+    object-fit:cover;
+    display:block;
+    background:#f2f2f2;
+  }
+  .thumb span{
+    display:block;
+    margin-top:6px;
+    font-size:12px;
+    line-height:1.5;
+  }
+  .thumb:hover span{color:var(--hl);}
 
   /* ---------- media ---------- */
   .media{margin-bottom:28px;}
@@ -133,9 +149,9 @@
     main{margin-left:0;padding:16px 20px 60px;}
     .wrap{flex-direction:column;}
     .media-row{grid-template-columns:1fr;}
-    #home.page.on{min-height:50vh;}
-    .home-name .en{font-size:26px;}
-    .home-name .zh{font-size:20px;}
+    .grid{grid-template-columns:repeat(2,1fr);gap:16px 12px;}
+    .home-name .en{font-size:24px;}
+    .home-name .zh{font-size:18px;}
   }
 </style>
 </head>
@@ -151,22 +167,6 @@
     <li><a href="#press" data-page="press">PRESS</a></li>
     <li><a href="#word" data-page="word">WORD</a></li>
   </ul>
-
-  <div class="nav-label">Works</div>
-  <ul>
-    <li><a href="#ripples" data-page="ripples">さざ波：200年後の大地震</a></li>
-    <li><a href="#pbd" data-page="pbd">ペイル・ブルー・ドット</a></li>
-    <li><a href="#saitama" data-page="saitama">夢をみる、さいたま</a></li>
-    <li><a href="#spaceship" data-page="spaceship">宇宙船イン・ビトゥイーン号の窓</a></li>
-    <li><a href="#burning" data-page="burning">燃える心</a></li>
-    <li><a href="#boar" data-page="boar">イノシシの心</a></li>
-    <li><a href="#perf" data-page="perf">身体と音声によるパフォーマンス</a></li>
-    <li><a href="#yomi" data-page="yomi">黄泉の旅</a></li>
-    <li><a href="#meisen" data-page="meisen">冥銭とビットコイン</a></li>
-    <li><a href="#stuffed" data-page="stuffed">人間が大嫌いなぬいぐるみ</a></li>
-    <li><a href="#dream" data-page="dream">暁闇の夢</a></li>
-    <li><a href="#picnic" data-page="picnic">ピクニック</a></li>
-  </ul>
 </nav>
 
 <main>
@@ -177,6 +177,20 @@
       <div class="en">XU QIUCHENG</div>
       <div class="zh">徐秋成</div>
       <div class="role">Media artist / Performer — Tokyo</div>
+    </div>
+    <div class="grid">
+      <a href="#ripples" data-page="ripples" class="thumb"><img src="images/ripples-main.jpg" alt="さざ波：200年後の大地震"><span>さざ波：200年後の大地震</span></a>
+      <a href="#pbd" data-page="pbd" class="thumb"><img src="images/pbd-main.jpg" alt="ペイル・ブルー・ドット"><span>ペイル・ブルー・ドット</span></a>
+      <a href="#saitama" data-page="saitama" class="thumb"><img src="images/saitama-main.jpg" alt="夢をみる、さいたま"><span>夢をみる、さいたま</span></a>
+      <a href="#spaceship" data-page="spaceship" class="thumb"><img src="images/spaceship-main.jpg" alt="宇宙船イン・ビトゥイーン号の窓"><span>宇宙船イン・ビトゥイーン号の窓</span></a>
+      <a href="#burning" data-page="burning" class="thumb"><img src="images/burning-main.jpg" alt="燃える心"><span>燃える心</span></a>
+      <a href="#boar" data-page="boar" class="thumb"><img src="images/boar-main.jpg" alt="イノシシの心"><span>イノシシの心</span></a>
+      <a href="#perf" data-page="perf" class="thumb"><img src="images/perf-main.jpg" alt="身体と音声によるパフォーマンス"><span>身体と音声によるパフォーマンス</span></a>
+      <a href="#yomi" data-page="yomi" class="thumb"><img src="images/yomi-main.jpg" alt="黄泉の旅"><span>黄泉の旅</span></a>
+      <a href="#meisen" data-page="meisen" class="thumb"><img src="images/meisen-main.jpg" alt="冥銭とビットコイン"><span>冥銭とビットコイン</span></a>
+      <a href="#stuffed" data-page="stuffed" class="thumb"><img src="images/stuffed-main.jpg" alt="人間が大嫌いなぬいぐるみ"><span>人間が大嫌いなぬいぐるみ</span></a>
+      <a href="#dream" data-page="dream" class="thumb"><img src="images/dream-main.jpg" alt="暁闇の夢"><span>暁闇の夢</span></a>
+      <a href="#picnic" data-page="picnic" class="thumb"><img src="images/picnic-main.jpg" alt="ピクニック"><span>ピクニック</span></a>
     </div>
   </section>
 
@@ -467,12 +481,12 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 </div>
 
 <script>
-  const links = document.querySelectorAll('nav a[data-page]');
+  const links = document.querySelectorAll('a[data-page]');
   const pages = document.querySelectorAll('.page');
 
   function show(id){
     pages.forEach(p => p.classList.toggle('on', p.id === id));
-    links.forEach(a => a.classList.toggle('active', a.dataset.page === id));
+    document.querySelectorAll('nav a[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === id));
     window.scrollTo(0,0);
   }
 
