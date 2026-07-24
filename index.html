@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XU QIUCHENG 徐秋成</title>
+<title>Xu Qiu Cheng 徐秋成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#111;
-    --ghost:#999;
-    --line:#e5e5e5;
-    --bg:#fff;
-    --hl:#0000ee;
+    --ink:#1c1b17;
+    --ghost:#8a867c;
+    --line:#dcd8cc;
+    --bg:#f2f0e9;
+    --hl:#2647ff;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{
-    font-family:"Helvetica Neue",Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+    font-family:"IBM Plex Mono","Menlo","Consolas","Hiragino Kaku Gothic ProN","Noto Sans JP",monospace;
     font-size:13px;
     line-height:1.7;
     color:var(--ink);
@@ -111,6 +114,21 @@
     line-height:1.5;
   }
   .thumb:hover span{color:var(--hl);}
+  .thumb:hover img{outline:2px solid var(--hl);outline-offset:2px;}
+
+  /* ---------- cursor square ---------- */
+  #cursor-sq{
+    position:fixed;
+    width:10px;
+    height:10px;
+    background:var(--hl);
+    pointer-events:none;
+    z-index:999;
+    opacity:0;
+    transform:translate(14px,14px);
+    transition:opacity .12s;
+  }
+  body.hovering #cursor-sq{opacity:1;}
 
   /* ---------- media ---------- */
   .media{margin-bottom:28px;}
@@ -159,7 +177,7 @@
 <div class="wrap">
 
 <nav>
-  <a href="#home" class="site-title" data-page="home">XU QIUCHENG</a>
+  <a href="#home" class="site-title" data-page="home">Xu Qiu Cheng</a>
 
   <ul class="nav-main">
     <li><a href="#news" data-page="news">NEWS</a></li>
@@ -174,7 +192,7 @@
   <!-- ============ HOME ============ -->
   <section class="page on" id="home">
     <div class="home-name">
-      <div class="en">XU QIUCHENG</div>
+      <div class="en">Xu Qiu Cheng</div>
       <div class="zh">徐秋成</div>
       <div class="role">Media artist / Performer — Tokyo</div>
     </div>
@@ -207,7 +225,7 @@
 
   <!-- ============ CV ============ -->
   <section class="page" id="cv">
-    <h1>XU QIUCHENG 徐秋成（ジョ・チウチェン）</h1>
+    <h1>Xu Qiu Cheng 徐秋成（ジョ・チウチェン）</h1>
     <div class="meta">Media artist / Performer — Tokyo</div>
     <p class="desc">メディアアーティスト、舞台俳優。東京藝術大学美術学部先端芸術表現科 教育研究助手。アウトサイダーの記憶、ポストメモリー、夢と睡眠、仮想空間と死後の世界、社会的に規制されたシステムとしての身体をテーマに、映像インスタレーション、ゲームエンジンを用いた作品、舞台パフォーマンスを横断して制作を行う。
 
@@ -480,7 +498,17 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 </main>
 </div>
 
+<div id="cursor-sq"></div>
 <script>
+  const sq = document.getElementById('cursor-sq');
+  document.addEventListener('mousemove', e => {
+    sq.style.left = e.clientX + 'px';
+    sq.style.top  = e.clientY + 'px';
+  });
+  document.addEventListener('mouseover', e => {
+    document.body.classList.toggle('hovering', !!e.target.closest('a'));
+  });
+
   const links = document.querySelectorAll('a[data-page]');
   const pages = document.querySelectorAll('.page');
 
