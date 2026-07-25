@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1c1b17;
-    --ghost:#8a867c;
-    --line:#dcd8cc;
+    --ink:#2647ff;
+    --ghost:#8fa0ff;
+    --line:#c9d2ff;
     --bg:#f2f0e9;
     --hl:#2647ff;
   }
@@ -24,7 +24,7 @@
     background:var(--bg);
   }
   a{color:inherit;text-decoration:none;}
-  a:hover{color:var(--hl);}
+  a:hover{color:var(--bg);background:var(--hl);}
   .desc a{color:var(--hl);}
 
   .wrap{display:flex;min-height:100vh;}
@@ -113,7 +113,8 @@
     font-size:12px;
     line-height:1.5;
   }
-  .thumb:hover span{color:var(--hl);}
+  .thumb{background:none !important;}
+  .thumb:hover span{color:var(--bg);background:var(--hl);}
   .thumb:hover img{outline:2px solid var(--hl);outline-offset:2px;}
 
   /* ---------- cursor square ---------- */
@@ -129,6 +130,24 @@
     transition:opacity .12s;
   }
   body.hovering #cursor-sq{opacity:1;}
+
+  /* ---------- fullscreen grid ---------- */
+  #grid-overlay{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:0;
+    transition:opacity .25s ease;
+    background-image:
+      linear-gradient(to right, rgba(38,71,255,.22) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(38,71,255,.22) 1px, transparent 1px);
+    background-size:40px 40px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 80%);
+    mask-image:radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 80%);
+  }
+  body.hovering #grid-overlay{opacity:1;}
+  nav, main{position:relative;z-index:2;}
 
   /* ---------- media ---------- */
   .media{margin-bottom:28px;}
@@ -498,6 +517,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 </main>
 </div>
 
+<div id="grid-overlay"></div>
 <div id="cursor-sq"></div>
 <script>
   const sq = document.getElementById('cursor-sq');
