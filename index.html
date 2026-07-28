@@ -205,6 +205,30 @@
   body.mode-3d .site-head{display:none;}
   body.mode-3d #contact{color:#f2f0e9;}
   body.mode-3d #three-hint{color:#9a9a9a;}
+
+  /* axis-colored nav: top left, horizontal, 3D mode only */
+  #axis-nav{
+    position:fixed;
+    top:22px;
+    left:22px;
+    z-index:10;
+    display:none;
+    flex-direction:row;
+    align-items:center;
+    gap:18px;
+  }
+  body.mode-3d #axis-nav{display:flex;}
+  #axis-nav a{
+    font-size:13px;
+    letter-spacing:.1em;
+    padding:1px 5px;
+  }
+  #axis-nav .n-x{color:#e0504f;}
+  #axis-nav .n-y{color:#6cae3f;}
+  #axis-nav .n-z{color:#4a80ff;}
+  #axis-nav .n-x:hover{background:#e0504f;color:#393939;}
+  #axis-nav .n-y:hover{background:#6cae3f;color:#393939;}
+  #axis-nav .n-z:hover{background:#4a80ff;color:#393939;}
   main{pointer-events:none;}
   .site-head,.page{pointer-events:auto;}
 
@@ -228,11 +252,11 @@
   #contact{
     position:fixed;
     right:20px;
-    bottom:18px;
+    bottom:64px;
     z-index:10;
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:14px;
   }
   #contact a{
     display:inline-flex;
@@ -241,8 +265,8 @@
     padding:5px;
   }
   #contact svg{
-    width:16px;
-    height:16px;
+    width:22px;
+    height:22px;
     display:block;
     stroke:currentColor;
     fill:none;
@@ -575,6 +599,11 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 <div id="grid-overlay"></div>
 <div id="cursor-sq"></div>
 <div id="three-home"></div>
+<div id="axis-nav">
+  <a href="#news"  data-page="news"  class="n-x">NEWS</a>
+  <a href="#cv"    data-page="cv"    class="n-y">CV</a>
+  <a href="#press" data-page="press" class="n-z">PRESS</a>
+</div>
 <div id="three-hint">DRAG — ORBIT　·　SCROLL — ZOOM　·　CLICK — GRAVITY</div>
 
 <!-- ---------- contact (bottom right) ---------- -->
@@ -704,22 +733,29 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     /* ---------- floating works: positioned by time (X) & space (Y) ---------- */
     const T0 = 2019.4, T1 = 2025.3;
     const mapT = t => -30 + (t - T0) / (T1 - T0) * 60;
+    /* 减淡仅适用于 2022 年以前的作品；2022 年以降 = 完全不透明 */
+    const FADE_UNTIL = 2022;
+    const mapFade = t => t >= FADE_UNTIL
+      ? 1
+      : 0.42 + 0.58 * Math.min(1, Math.max(0, (t - T0) / (FADE_UNTIL - T0)));
     const texLoader = new THREE.TextureLoader();
     WORKS.forEach((w, i) => {
+      const fade = mapFade(w.t);
       const sp = makeTextSprite(w.title, '#f2f0e9', '#2647ff', 34);
       sp.position.set(mapT(w.t), 6 + (i % 5) * 2, w.s);
-      Object.assign(sp.userData, { page:w.page, baseY:sp.position.y, seed:i * 1.7, hover:false });
+      sp.material.opacity = fade;
+      Object.assign(sp.userData, { page:w.page, baseY:sp.position.y, seed:i * 1.7, hover:false, fade });
       scene.add(sp);
       sprites.push(sp);
 
       texLoader.load('images/' + w.page + '-main.jpg', tex => {
         tex.minFilter = THREE.LinearFilter;
-        const im = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, fog:false }));
+        const im = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, fog:false, transparent:true, opacity:fade }));
         const IW = 8, IH = IW * tex.image.height / tex.image.width;
         im.scale.set(IW, IH, 1);
         im.position.copy(sp.position);
         Object.assign(im.userData, {
-          page:w.page, pairText:sp,
+          page:w.page, pairText:sp, fade,
           off: sp.scale.y / 2 + IH / 2 + 0.6
         });
         im.position.y += im.userData.off;
@@ -729,23 +765,16 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       });
     });
 
-    /* ---------- name at the axis intersection, nav just above the grid ---------- */
+    /* ---------- name right at the axis intersection ---------- */
     const nameEn = makeTextSprite('Xu Qiu Cheng', '#f2f0e9', '#2647ff', 80, 800);
-    nameEn.position.set(0, 6.2, 0);
+    nameEn.position.set(0, 3.2, 0);
     Object.assign(nameEn.userData, { action:'reset', hover:false });
     scene.add(nameEn); sprites.push(nameEn);
 
     const nameZh = makeTextSprite('徐 秋 成', '#f2f0e9', '#2647ff', 58, 800);
-    nameZh.position.set(0, 2.9, 0);
+    nameZh.position.set(0, 1.0, 0);
     Object.assign(nameZh.userData, { action:'reset', hover:false });
     scene.add(nameZh); sprites.push(nameZh);
-
-    [['news','NEWS',-8],['cv','CV',0],['press','PRESS',8]].forEach(n => {
-      const s = makeTextSprite(n[1], '#f2f0e9', '#2647ff', 26);
-      s.position.set(n[2], 1.1, 6);
-      Object.assign(s.userData, { page:n[0], hover:false });
-      scene.add(s); sprites.push(s);
-    });
 
     buildGizmo();
 
@@ -942,14 +971,13 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 
   /* ---------- little planets: fall, dent spacetime, vanish ---------- */
   const balls = [];
-  const BALL_R = 0.75, BALL_LIFE = 15, WELL_DEPTH = 1.4, WELL_SIG = 2.0;
+  const BALL_R = 0.38, BALL_LIFE = 15, WELL_DEPTH = 0.8, WELL_SIG = 1.5;
 
   function spawnBall(x, z){
     if(balls.length >= 8) balls[0].born = -1e9;   /* expire oldest */
-    const col = new THREE.Color().setHSL(Math.random(), 0.65 + Math.random() * 0.3, 0.55 + Math.random() * 0.15);
     const mesh = new THREE.Mesh(
       new THREE.SphereGeometry(BALL_R, 20, 16),
-      new THREE.MeshBasicMaterial({ color: col, transparent:true })
+      new THREE.MeshBasicMaterial({ color: 0xf2f0e9, transparent:true })
     );
     mesh.position.set(x, 16, z);
     scene.add(mesh);
@@ -1038,7 +1066,14 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
         sprites.forEach(s => {
           if(!s.userData.setHover) return;
           const on = s === hitText;
-          if(on !== s.userData.hover){ s.userData.hover = on; s.userData.setHover(on); }
+          if(on !== s.userData.hover){
+            s.userData.hover = on;
+            s.userData.setHover(on);
+            if(s.userData.fade !== undefined){
+              s.material.opacity = on ? 1 : s.userData.fade;
+              if(s.userData.img) s.userData.img.material.opacity = on ? 1 : s.userData.img.userData.fade;
+            }
+          }
         });
         el.classList.toggle('pick', !!hit);
         document.body.classList.toggle('hovering', !!hit);
