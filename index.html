@@ -55,11 +55,6 @@
     letter-spacing:.5em;
     margin-top:4px;
   }
-  .site-head .role{
-    margin-top:10px;
-    color:var(--ghost);
-    letter-spacing:.06em;
-  }
   .head-nav{
     display:flex;
     justify-content:center;
@@ -181,6 +176,22 @@
     .media-row{grid-template-columns:1fr;}
     .grid{grid-template-columns:repeat(2,1fr);gap:16px 12px;}
   }
+  /* ---------- postscript note ---------- */
+  .note{
+    max-width:600px;
+    margin-top:48px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    white-space:pre-line;
+    font-size:12px;
+  }
+  .note-label{
+    color:var(--ghost);
+    font-size:11px;
+    letter-spacing:.12em;
+    margin-bottom:8px;
+  }
+
   /* ---------- contact (bottom right) ---------- */
   #contact{
     position:fixed;
@@ -237,12 +248,10 @@
       <div class="en">Xu Qiu Cheng</div>
       <div class="zh">徐秋成</div>
     </a>
-    <div class="role">Media artist / Performer — Tokyo</div>
     <div class="head-nav">
       <a href="#news" data-page="news">NEWS</a>
       <a href="#cv" data-page="cv">CV</a>
       <a href="#press" data-page="press">PRESS</a>
-      <a href="#word" data-page="word">WORD</a>
     </div>
   </header>
 
@@ -319,16 +328,6 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     </div>
 
     <div class="list-block">
-      <h2>ワークショップ</h2>
-      <div class="row"><span class="year">2021–23</span><span>アピチャッポン・ウィーラセタクンのワークショップに三年連続参加（塩田千春との合同授業を含む）</span></div>
-      <div class="row"><span class="year">2021</span><span>チェルフィッチュ 日本語を使った演劇ワークショップ 2</span></div>
-      <div class="row"><span class="year">2022</span><span>ベルリン：多摩美術大学（笠原恵美子、久保田晃弘）× ベルリン芸術大学（UdK）共同ワークショップ</span></div>
-      <div class="row"><span class="year">2023</span><span>韓国光州ビエンナーレ × ソウル国立大学彫刻学科 共同ワークショップ</span></div>
-      <div class="row"><span class="year">2024</span><span>MOT アーティスト ホー・ツーニェンのワークショップ</span></div>
-      <div class="row"><span class="year">2024</span><span>GAP 相馬千秋とウズベキスタン 4 都市でのリサーチワークショップ</span></div>
-    </div>
-
-    <div class="list-block">
       <h2>Contact</h2>
       <div class="row"><span>Email: <a href="mailto:bluedehua@gmail.com">bluedehua@gmail.com</a> / Instagram: <a href="https://www.instagram.com/bzufr/" target="_blank" rel="noopener noreferrer">@bzufr</a></span></div>
     </div>
@@ -337,13 +336,6 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
   <!-- ============ PRESS ============ -->
   <section class="page" id="press">
     <h1>PRESS</h1>
-  </section>
-
-  <!-- ============ WORD ============ -->
-  <section class="page" id="word">
-    <h1>WORD</h1>
-    <div class="meta">Texts, statements, writing</div>
-    <p class="desc">　日本に来て八年。最初に日本語を喋る時、自分の考えや感情を十分に伝えきれない不自由さを感じる一方で、私はある種の「自由」も感じていた。その「自由」はおそらく、言葉の意味や深みが分からないからこそ感じた「想像の自由」だった。ある意味で、私が自分の想像力によってバーチャル空間と呼べるものを作ったのかもしれない。そのような空間で、ここに来る前の前の前のこと、これから先の先の先のことを考え続けている。私が感じている直線的な時間の流れではなく、繰り返され、乱れ、交差し、ときには層をなして重なり合う時間のように、たくさんのリアリティも存在する。そのようなことを思い出しつつ、今あなたが読んでいるこの文章を書いた。</p>
   </section>
 
   <!-- ============ RIPPLES ============ -->
@@ -361,6 +353,11 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       <div class="media"><img src="images/ripples-02.jpg" alt="RIPPLES excerpt 2"></div>
     </div>
     <div class="media"><img src="images/ripples-doodle.jpg" alt="iPad drawing" style="max-width:380px"><div class="cap">iPad で描いた落書き</div></div>
+
+    <div class="note">
+      <div class="note-label">小記</div>
+      　日本に来て八年。最初に日本語を喋る時、自分の考えや感情を十分に伝えきれない不自由さを感じる一方で、私はある種の「自由」も感じていた。その「自由」はおそらく、言葉の意味や深みが分からないからこそ感じた「想像の自由」だった。ある意味で、私が自分の想像力によってバーチャル空間と呼べるものを作ったのかもしれない。そのような空間で、ここに来る前の前の前のこと、これから先の先の先のことを考え続けている。私が感じている直線的な時間の流れではなく、繰り返され、乱れ、交差し、ときには層をなして重なり合う時間のように、たくさんのリアリティも存在する。そのようなことを思い出しつつ、今あなたが読んでいるこの文章を書いた。
+    </div>
   </section>
 
   <!-- ============ PALE BLUE DOT ============ -->
