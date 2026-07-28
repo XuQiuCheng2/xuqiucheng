@@ -28,43 +28,51 @@
   .desc a{color:var(--hl);}
 
   .wrap{display:flex;min-height:100vh;}
-  nav{
-    width:180px;
-    flex-shrink:0;
-    padding:40px 24px;
-    position:fixed;
-    height:100vh;
-    overflow-y:auto;
-  }
   main{
-    margin-left:180px;
     flex:1;
+    margin:0 auto;
     padding:40px 48px 80px;
     max-width:980px;
   }
 
-  /* ---------- nav ---------- */
-  .site-title{
-    font-size:13px;
-    font-weight:700;
-    letter-spacing:.08em;
-    margin-bottom:28px;
-    display:block;
+  /* ---------- header (centered name + nav) ---------- */
+  .site-head{
+    text-align:center;
+    margin-bottom:56px;
   }
-  .nav-main{margin-bottom:28px;}
-  nav li{list-style:none;}
-  nav li a{
-    display:block;
-    padding:1px 0;
+  .site-head .name{
+    display:inline-block;
+  }
+  .site-head .en{
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:.12em;
+    line-height:1.3;
+  }
+  .site-head .zh{
+    font-size:20px;
+    font-weight:400;
+    letter-spacing:.5em;
+    margin-top:4px;
+  }
+  .site-head .role{
+    margin-top:10px;
+    color:var(--ghost);
     letter-spacing:.06em;
   }
-  nav li a.active{color:var(--hl);}
-  .nav-label{
-    color:var(--ghost);
-    font-size:11px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    margin-bottom:6px;
+  .head-nav{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:18px;
+  }
+  .head-nav a{
+    letter-spacing:.08em;
+    padding:1px 4px;
+  }
+  .head-nav a.active{
+    background:var(--hl);
+    color:var(--bg);
   }
 
   /* ---------- pages ---------- */
@@ -76,24 +84,6 @@
   .desc{max-width:600px;margin-bottom:32px;white-space:pre-line;}
 
   /* ---------- home ---------- */
-  .home-name{margin-bottom:40px;}
-  .home-name .en{
-    font-size:28px;
-    font-weight:700;
-    letter-spacing:.12em;
-    line-height:1.3;
-  }
-  .home-name .zh{
-    font-size:20px;
-    font-weight:400;
-    letter-spacing:.5em;
-    margin-top:4px;
-  }
-  .home-name .role{
-    margin-top:10px;
-    color:var(--ghost);
-    letter-spacing:.06em;
-  }
   .grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
@@ -147,7 +137,7 @@
     mask-image:radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 80%);
   }
   body.hovering #grid-overlay{opacity:1;}
-  nav, main{position:relative;z-index:2;}
+  main{position:relative;z-index:2;}
 
   /* ---------- media ---------- */
   .media{margin-bottom:28px;}
@@ -182,13 +172,14 @@
 
   /* ---------- mobile ---------- */
   @media (max-width:720px){
-    nav{position:static;width:100%;height:auto;padding:24px 20px 8px;}
-    main{margin-left:0;padding:16px 20px 60px;}
+    main{padding:24px 20px 60px;}
     .wrap{flex-direction:column;}
+    .site-head{margin-bottom:40px;}
+    .site-head .en{font-size:24px;}
+    .site-head .zh{font-size:18px;}
+    .head-nav{gap:14px;flex-wrap:wrap;}
     .media-row{grid-template-columns:1fr;}
     .grid{grid-template-columns:repeat(2,1fr);gap:16px 12px;}
-    .home-name .en{font-size:24px;}
-    .home-name .zh{font-size:18px;}
   }
   /* ---------- contact (bottom right) ---------- */
   #contact{
@@ -238,26 +229,25 @@
 <body>
 <div class="wrap">
 
-<nav>
-  <a href="#home" class="site-title" data-page="home">Xu Qiu Cheng</a>
-
-  <ul class="nav-main">
-    <li><a href="#news" data-page="news">NEWS</a></li>
-    <li><a href="#cv" data-page="cv">CV</a></li>
-    <li><a href="#press" data-page="press">PRESS</a></li>
-    <li><a href="#word" data-page="word">WORD</a></li>
-  </ul>
-</nav>
-
 <main>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-head">
+    <a href="#home" data-page="home" class="name">
+      <div class="en">Xu Qiu Cheng</div>
+      <div class="zh">徐秋成</div>
+    </a>
+    <div class="role">Media artist / Performer — Tokyo</div>
+    <div class="head-nav">
+      <a href="#news" data-page="news">NEWS</a>
+      <a href="#cv" data-page="cv">CV</a>
+      <a href="#press" data-page="press">PRESS</a>
+      <a href="#word" data-page="word">WORD</a>
+    </div>
+  </header>
 
   <!-- ============ HOME ============ -->
   <section class="page on" id="home">
-    <div class="home-name">
-      <div class="en">Xu Qiu Cheng</div>
-      <div class="zh">徐秋成</div>
-      <div class="role">Media artist / Performer — Tokyo</div>
-    </div>
     <div class="grid">
       <a href="#ripples" data-page="ripples" class="thumb"><img src="images/ripples-main.jpg" alt="さざ波：200年後の大地震"><span>さざ波：200年後の大地震</span></a>
       <a href="#pbd" data-page="pbd" class="thumb"><img src="images/pbd-main.jpg" alt="ペイル・ブルー・ドット"><span>ペイル・ブルー・ドット</span></a>
@@ -593,7 +583,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 
   function show(id){
     pages.forEach(p => p.classList.toggle('on', p.id === id));
-    document.querySelectorAll('nav a[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === id));
+    document.querySelectorAll('.head-nav a[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === id));
     window.scrollTo(0,0);
   }
 
