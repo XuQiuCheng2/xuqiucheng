@@ -202,6 +202,9 @@
     pointer-events:none;
   }
   body.mode-3d #three-hint{display:block;}
+  body.mode-3d .site-head{display:none;}
+  body.mode-3d #contact{color:#f2f0e9;}
+  body.mode-3d #three-hint{color:#9a9a9a;}
   main{pointer-events:none;}
   .site-head,.page{pointer-events:auto;}
 
@@ -611,30 +614,31 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
      3D HOME — Blender-viewport-style world
      paper background / ink-blue elastic grid / XYZ axes / floating works
      ================================================================ */
+  /* t = 时间（年）, s = 空间（-30 身体・ここ ←→ +30 宇宙・かなた）— 可自由调整 */
   const WORKS = [
-    {page:'ripples',   title:'さざ波：200年後の大地震'},
-    {page:'pbd',       title:'ペイル・ブルー・ドット'},
-    {page:'saitama',   title:'夢をみる、さいたま'},
-    {page:'spaceship', title:'宇宙船イン・ビトゥイーン号の窓'},
-    {page:'burning',   title:'燃える心'},
-    {page:'boar',      title:'イノシシの心'},
-    {page:'perf',      title:'身体と音声によるパフォーマンス'},
-    {page:'yomi',      title:'黄泉の旅'},
-    {page:'meisen',    title:'冥銭とビットコイン'},
-    {page:'stuffed',   title:'人間が大嫌いなぬいぐるみ'},
-    {page:'dream',     title:'暁闇の夢'},
-    {page:'picnic',    title:'ピクニック'}
+    {page:'picnic',    title:'ピクニック',                     t:2019.7, s:-8},
+    {page:'dream',     title:'暁闇の夢',                       t:2020.1, s:12},
+    {page:'stuffed',   title:'人間が大嫌いなぬいぐるみ',       t:2020.5, s:2},
+    {page:'meisen',    title:'冥銭とビットコイン',             t:2021.0, s:8},
+    {page:'perf',      title:'身体と音声によるパフォーマンス', t:2021.0, s:-26},
+    {page:'yomi',      title:'黄泉の旅',                       t:2021.6, s:16},
+    {page:'boar',      title:'イノシシの心',                   t:2021.9, s:-14},
+    {page:'burning',   title:'燃える心',                       t:2023.0, s:-20},
+    {page:'spaceship', title:'宇宙船イン・ビトゥイーン号の窓', t:2023.5, s:22},
+    {page:'saitama',   title:'夢をみる、さいたま',             t:2024.0, s:-2},
+    {page:'pbd',       title:'ペイル・ブルー・ドット',         t:2024.6, s:26},
+    {page:'ripples',   title:'さざ波：200年後の大地震',        t:2025.0, s:30}
   ];
 
-  const PAPER = 0xf2f0e9, INK = 0x2647ff;
+  const PAPER = 0xf2f0e9, INK = 0x2647ff, DARK = 0x393939, GRIDCOL = 0x9a9a9a;
   let three_ok = false, running = false, rafId = null;
   let renderer, scene, camera, raycaster, gridPos, sprites = [];
   let segA, segB, h, hPrev, hTmp;
   let N, HALF, STEP;
 
-  /* camera orbit state */
+  /* camera orbit state — starts far (axes overview), glides in */
   const target = new THREE.Vector3(0, 5, 0);
-  let theta = 0.65, phi = 1.12, dist = 62;
+  let theta = 0.65, phi = 1.05, dist = 165, distTarget = 105;
   let dragging = false, moved = 0, px = 0, py = 0, pinchD = 0;
   let lastInteract = 0;
 
@@ -645,17 +649,17 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(PAPER);
+    renderer.setClearColor(DARK);
     holder.appendChild(renderer.domElement);
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(PAPER, 90, 220);
+    scene.fog = new THREE.Fog(DARK, 90, 220);
 
     camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 500);
     raycaster = new THREE.Raycaster();
 
     /* ---------- elastic grid (height field + line segments) ---------- */
-    N = window.innerWidth < 720 ? 56 : 76;
+    N = window.innerWidth < 720 ? 68 : 96;
     const SIZE = 180;
     HALF = SIZE / 2; STEP = SIZE / N;
     const P = (N + 1) * (N + 1);
@@ -672,37 +676,78 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     gridPos = new Float32Array(segs.length * 3);
     const gridGeo = new THREE.BufferGeometry();
     gridGeo.setAttribute('position', new THREE.BufferAttribute(gridPos, 3));
-    const gridMat = new THREE.LineBasicMaterial({ color: INK, transparent:true, opacity:0.3 });
+    const gridMat = new THREE.LineBasicMaterial({ color: GRIDCOL, transparent:true, opacity:0.32 });
     scene.add(new THREE.LineSegments(gridGeo, gridMat));
 
-    /* ---------- Blender-style axes ---------- */
-    const AX = 34;
+    /* ---------- Blender-style axes (cylinders = real thickness) ---------- */
+    const AX = 34, AXR = 0.11;
     const axes = [
-      { col:0xe0504f, from:[-AX,0.06,0], to:[AX,0.06,0], label:'X', at:[AX+2,0.6,0] },
-      { col:0x6cae3f, from:[0,0.06,-AX], to:[0,0.06,AX], label:'Y', at:[0,0.6,AX+2] },
-      { col:0x3a6fe0, from:[0,0,0],      to:[0,AX,0],    label:'Z', at:[0,AX+2,0] }
+      { col:0xe0504f, from:[-AX,0.12,0], to:[AX,0.12,0], label:'X · TIME',  at:[AX+6,0.9,0] },
+      { col:0x6cae3f, from:[0,0.12,-AX], to:[0,0.12,AX], label:'Y · SPACE', at:[0,0.9,AX+6] },
+      { col:0x4a80ff, from:[0,0,0],      to:[0,AX,0],    label:'Z',         at:[0,AX+2,0] }
     ];
     axes.forEach(a => {
-      const g = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(...a.from), new THREE.Vector3(...a.to)
-      ]);
-      scene.add(new THREE.Line(g, new THREE.LineBasicMaterial({ color:a.col, transparent:true, opacity:0.85 })));
+      const from = new THREE.Vector3(...a.from), to = new THREE.Vector3(...a.to);
+      const dir = to.clone().sub(from), len = dir.length();
+      const cyl = new THREE.Mesh(
+        new THREE.CylinderGeometry(AXR, AXR, len, 10),
+        new THREE.MeshBasicMaterial({ color:a.col })
+      );
+      cyl.position.copy(from).add(to).multiplyScalar(0.5);
+      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+      scene.add(cyl);
       const s = makeTextSprite(a.label, '#' + a.col.toString(16).padStart(6,'0'), null, 26);
       s.position.set(...a.at);
       scene.add(s);
     });
 
-    /* ---------- floating works ---------- */
-    const GOLD = Math.PI * (3 - Math.sqrt(5));
+    /* ---------- floating works: positioned by time (X) & space (Y) ---------- */
+    const T0 = 2019.4, T1 = 2025.3;
+    const mapT = t => -30 + (t - T0) / (T1 - T0) * 60;
+    const texLoader = new THREE.TextureLoader();
     WORKS.forEach((w, i) => {
-      const sp = makeTextSprite(w.title, '#2647ff', '#2647ff', 34);
-      const r = 15 + i * 2.1;
-      const a = i * GOLD;
-      sp.position.set(Math.cos(a) * r, 7 + ((i * 5) % 12), Math.sin(a) * r);
+      const sp = makeTextSprite(w.title, '#f2f0e9', '#2647ff', 34);
+      sp.position.set(mapT(w.t), 6 + (i % 5) * 2, w.s);
       Object.assign(sp.userData, { page:w.page, baseY:sp.position.y, seed:i * 1.7, hover:false });
       scene.add(sp);
       sprites.push(sp);
+
+      texLoader.load('images/' + w.page + '-main.jpg', tex => {
+        tex.minFilter = THREE.LinearFilter;
+        const im = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, fog:false }));
+        const IW = 10, IH = IW * tex.image.height / tex.image.width;
+        im.scale.set(IW, IH, 1);
+        im.position.copy(sp.position);
+        Object.assign(im.userData, {
+          page:w.page, pairText:sp,
+          off: sp.scale.y / 2 + IH / 2 + 0.6
+        });
+        im.position.y += im.userData.off;
+        sp.userData.img = im;
+        scene.add(im);
+        sprites.push(im);
+      });
     });
+
+    /* ---------- name + nav at the origin ---------- */
+    const nameEn = makeTextSprite('Xu Qiu Cheng', '#f2f0e9', '#2647ff', 80, 800);
+    nameEn.position.set(0, 19, 0);
+    Object.assign(nameEn.userData, { action:'reset', hover:false });
+    scene.add(nameEn); sprites.push(nameEn);
+
+    const nameZh = makeTextSprite('徐 秋 成', '#f2f0e9', '#2647ff', 58, 800);
+    nameZh.position.set(0, 14.8, 0);
+    Object.assign(nameZh.userData, { action:'reset', hover:false });
+    scene.add(nameZh); sprites.push(nameZh);
+
+    [['news','NEWS',-7],['cv','CV',0],['press','PRESS',7]].forEach(n => {
+      const s = makeTextSprite(n[1], '#f2f0e9', '#2647ff', 26);
+      s.position.set(n[2], 11, 0);
+      Object.assign(s.userData, { page:n[0], hover:false });
+      scene.add(s); sprites.push(s);
+    });
+
+    buildGizmo();
 
     bindInput(renderer.domElement);
     window.addEventListener('resize', onResize);
@@ -710,11 +755,11 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
   }
 
   /* text sprite: normal = ink text / hover = inverted block (site language) */
-  function makeTextSprite(text, colNormal, colHover, fs){
-    const pad = 14, dpr = 2;
+  function makeTextSprite(text, colNormal, colHover, fs, weight){
+    const pad = 14, dpr = 2, wt = weight || 600;
     const c = document.createElement('canvas');
     const ctx = c.getContext('2d');
-    ctx.font = '600 ' + fs + 'px "IBM Plex Mono", monospace';
+    ctx.font = wt + ' ' + fs + 'px "IBM Plex Mono", monospace';
     const tw = Math.ceil(ctx.measureText(text).width);
     c.width  = (tw + pad * 2) * dpr;
     c.height = (fs + pad * 2) * dpr;
@@ -722,7 +767,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     function draw(hover){
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, c.width, c.height);
-      ctx.font = '600 ' + fs + 'px "IBM Plex Mono", monospace';
+      ctx.font = wt + ' ' + fs + 'px "IBM Plex Mono", monospace';
       ctx.textBaseline = 'middle';
       if(hover){
         ctx.fillStyle = colHover;
@@ -742,6 +787,42 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     sp.scale.set(c.width / dpr / k, c.height / dpr / k, 1);
     sp.userData.setHover = on => { draw(on); tex.needsUpdate = true; };
     return sp;
+  }
+
+  /* ---------- corner navigation gizmo (Blender style) ---------- */
+  let gizmoScene, gizmoCam;
+  function buildGizmo(){
+    gizmoScene = new THREE.Scene();
+    gizmoCam = new THREE.OrthographicCamera(-2.7, 2.7, 2.7, -2.7, 0.1, 100);
+    const defs = [
+      [0xe0504f, [1,0,0], 'X'],
+      [0x6cae3f, [0,0,1], 'Y'],
+      [0x4a80ff, [0,1,0], 'Z']
+    ];
+    defs.forEach(d => {
+      const dir = new THREE.Vector3(...d[1]);
+      const cyl = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.07, 0.07, 1.55, 8),
+        new THREE.MeshBasicMaterial({ color:d[0] })
+      );
+      cyl.position.copy(dir.clone().multiplyScalar(0.78));
+      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+      gizmoScene.add(cyl);
+
+      const ball = new THREE.Mesh(
+        new THREE.SphereGeometry(0.32, 14, 14),
+        new THREE.MeshBasicMaterial({ color:d[0] })
+      );
+      ball.position.copy(dir.clone().multiplyScalar(1.85));
+      gizmoScene.add(ball);
+
+      const l = makeTextSprite(d[2], '#f2f0e9', null, 26);
+      l.scale.multiplyScalar(0.62);
+      l.position.copy(dir.clone().multiplyScalar(1.85));
+      l.material.depthTest = false;
+      l.renderOrder = 2;
+      gizmoScene.add(l);
+    });
   }
 
   /* ---------- spacetime elasticity: damped wave equation ---------- */
@@ -789,6 +870,42 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     }
   }
 
+  /* ---------- water drop sound (Web Audio, synthesized) ---------- */
+  let audioCtx = null;
+  function plop(){
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+      const t0 = audioCtx.currentTime;
+
+      /* drop: sine with falling pitch */
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      const f = 360 + Math.random() * 240;
+      o.frequency.setValueAtTime(f, t0);
+      o.frequency.exponentialRampToValueAtTime(f * 0.38, t0 + 0.17);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.2, t0 + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t0); o.stop(t0 + 0.34);
+
+      /* splash: short band-passed noise tail */
+      const dur = 0.4, sr = audioCtx.sampleRate;
+      const buf = audioCtx.createBuffer(1, sr * dur, sr);
+      const d = buf.getChannelData(0);
+      for(let i = 0; i < d.length; i++)
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.2);
+      const src = audioCtx.createBufferSource(); src.buffer = buf;
+      const bp = audioCtx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 850 + Math.random() * 600;
+      bp.Q.value = 1.1;
+      const ng = audioCtx.createGain(); ng.gain.value = 0.05;
+      src.connect(bp).connect(ng).connect(audioCtx.destination);
+      src.start(t0 + 0.012);
+    }catch(e){}
+  }
+
   /* ---------- input: orbit / zoom / click ---------- */
   function bindInput(el){
     el.addEventListener('pointerdown', e => {
@@ -805,8 +922,10 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
         px = e.clientX; py = e.clientY;
       } else {
         const hit = pickSprite(e.clientX, e.clientY);
+        const hitText = hit ? (hit.userData.pairText || hit) : null;
         sprites.forEach(s => {
-          const on = s === hit;
+          if(!s.userData.setHover) return;
+          const on = s === hitText;
           if(on !== s.userData.hover){ s.userData.hover = on; s.userData.setHover(on); }
         });
         el.classList.toggle('pick', !!hit);
@@ -817,23 +936,24 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       dragging = false; el.classList.remove('dragging');
       if(moved < 6){
         const hit = pickSprite(e.clientX, e.clientY);
-        if(hit){ location.hash = hit.userData.page; show(hit.userData.page); }
+        if(hit && hit.userData.page){ location.hash = hit.userData.page; show(hit.userData.page); }
+        else if(hit && hit.userData.action === 'reset'){ theta = 0.65; phi = 1.05; distTarget = 105; }
         else {
           const pt = pickGround(e.clientX, e.clientY);
-          if(pt) poke(pt.x, pt.z, 4.2);
+          if(pt){ poke(pt.x, pt.z, 4.2); plop(); }
         }
       }
     });
     el.addEventListener('wheel', e => {
       e.preventDefault();
-      dist = Math.min(150, Math.max(25, dist * (1 + e.deltaY * 0.001)));
+      distTarget = Math.min(170, Math.max(25, distTarget * (1 + e.deltaY * 0.001)));
     }, { passive:false });
     el.addEventListener('touchmove', e => {
       if(e.touches.length === 2){
         const d = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY);
-        if(pinchD) dist = Math.min(150, Math.max(25, dist * pinchD / d));
+        if(pinchD) distTarget = Math.min(170, Math.max(25, distTarget * pinchD / d));
         pinchD = d;
       }
     }, { passive:true });
@@ -869,6 +989,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     rafId = requestAnimationFrame(frame);
 
     if(!dragging && performance.now() - lastInteract > 3000) theta += 0.0006;
+    dist += (distTarget - dist) * 0.045;
 
     camera.position.set(
       target.x + dist * Math.sin(phi) * Math.sin(theta),
@@ -884,10 +1005,25 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     });
 
     sprites.forEach(s => {
+      if(s.userData.baseY === undefined) return;
       s.position.y = s.userData.baseY + Math.sin(t * 0.001 + s.userData.seed) * 0.5;
+      if(s.userData.img) s.userData.img.position.y = s.position.y + s.userData.img.userData.off;
     });
 
+    renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.render(scene, camera);
+
+    /* gizmo pass — top right */
+    const GS = window.innerWidth < 720 ? 72 : 94;
+    renderer.setScissorTest(true);
+    renderer.setViewport(window.innerWidth - GS - 14, window.innerHeight - GS - 14, GS, GS);
+    renderer.setScissor(window.innerWidth - GS - 14, window.innerHeight - GS - 14, GS, GS);
+    renderer.clearDepth();
+    gizmoCam.position.copy(camera.position).sub(target).normalize().multiplyScalar(8);
+    gizmoCam.up.copy(camera.up);
+    gizmoCam.lookAt(0, 0, 0);
+    renderer.render(gizmoScene, gizmoCam);
+    renderer.setScissorTest(false);
   }
   function startLoop(){ if(!running){ running = true; rafId = requestAnimationFrame(frame); } }
   function stopLoop(){ running = false; if(rafId) cancelAnimationFrame(rafId); }
@@ -919,7 +1055,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
   if(three_ok && document.fonts && document.fonts.ready){
     document.fonts.ready.then(() => {
       /* redraw sprites once webfont is loaded */
-      sprites.forEach(s => s.userData.setHover(s.userData.hover));
+      sprites.forEach(s => { if(s.userData.setHover) s.userData.setHover(s.userData.hover); });
     });
   }
   boot();
