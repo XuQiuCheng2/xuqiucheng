@@ -940,46 +940,18 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     }catch(e){}
   }
 
-  /* ---------- little earths: fall, dent spacetime, vanish ---------- */
+  /* ---------- little planets: fall, dent spacetime, vanish ---------- */
   const balls = [];
-  const BALL_R = 1.5, BALL_LIFE = 15, WELL_DEPTH = 2.4, WELL_SIG = 2.8;
-
-  function earthTexture(){
-    const c = document.createElement('canvas');
-    c.width = 256; c.height = 128;
-    const x = c.getContext('2d');
-    x.fillStyle = '#2a5db0'; x.fillRect(0, 0, 256, 128);          /* ocean */
-    x.fillStyle = '#3f8f4f';                                       /* continents */
-    for(let i = 0; i < 24; i++){
-      x.beginPath();
-      x.ellipse(Math.random()*256, 14 + Math.random()*100,
-                5 + Math.random()*20, 3 + Math.random()*11,
-                Math.random()*3, 0, 7);
-      x.fill();
-    }
-    x.fillStyle = 'rgba(255,255,255,0.85)';                        /* clouds */
-    for(let i = 0; i < 10; i++){
-      x.beginPath();
-      x.ellipse(Math.random()*256, Math.random()*128,
-                8 + Math.random()*16, 2 + Math.random()*4,
-                0, 0, 7);
-      x.fill();
-    }
-    x.fillStyle = '#e8eef2';                                       /* ice caps */
-    x.fillRect(0, 0, 256, 8); x.fillRect(0, 120, 256, 8);
-    const t = new THREE.CanvasTexture(c);
-    t.minFilter = THREE.LinearFilter;
-    return t;
-  }
+  const BALL_R = 0.75, BALL_LIFE = 15, WELL_DEPTH = 1.4, WELL_SIG = 2.0;
 
   function spawnBall(x, z){
     if(balls.length >= 8) balls[0].born = -1e9;   /* expire oldest */
+    const col = new THREE.Color().setHSL(Math.random(), 0.65 + Math.random() * 0.3, 0.55 + Math.random() * 0.15);
     const mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(BALL_R, 24, 18),
-      new THREE.MeshBasicMaterial({ map: earthTexture(), transparent:true })
+      new THREE.SphereGeometry(BALL_R, 20, 16),
+      new THREE.MeshBasicMaterial({ color: col, transparent:true })
     );
     mesh.position.set(x, 16, z);
-    mesh.rotation.z = 0.41;                        /* axial tilt */
     scene.add(mesh);
     balls.push({ mesh, x, z, y:16, vy:0, state:'fall', born:performance.now() });
   }
@@ -1035,7 +1007,6 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
         if(b.mesh.material.opacity <= 0){
           scene.remove(b.mesh);
           b.mesh.geometry.dispose();
-          b.mesh.material.map.dispose();
           b.mesh.material.dispose();
           balls.splice(k, 1);
           continue;
