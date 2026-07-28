@@ -715,7 +715,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       texLoader.load('images/' + w.page + '-main.jpg', tex => {
         tex.minFilter = THREE.LinearFilter;
         const im = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, fog:false }));
-        const IW = 10, IH = IW * tex.image.height / tex.image.width;
+        const IW = 8, IH = IW * tex.image.height / tex.image.width;
         im.scale.set(IW, IH, 1);
         im.position.copy(sp.position);
         Object.assign(im.userData, {
@@ -729,20 +729,20 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       });
     });
 
-    /* ---------- name + nav at the origin ---------- */
+    /* ---------- name at the axis intersection, nav just above the grid ---------- */
     const nameEn = makeTextSprite('Xu Qiu Cheng', '#f2f0e9', '#2647ff', 80, 800);
-    nameEn.position.set(0, 19, 0);
+    nameEn.position.set(0, 6.2, 0);
     Object.assign(nameEn.userData, { action:'reset', hover:false });
     scene.add(nameEn); sprites.push(nameEn);
 
     const nameZh = makeTextSprite('徐 秋 成', '#f2f0e9', '#2647ff', 58, 800);
-    nameZh.position.set(0, 14.8, 0);
+    nameZh.position.set(0, 2.9, 0);
     Object.assign(nameZh.userData, { action:'reset', hover:false });
     scene.add(nameZh); sprites.push(nameZh);
 
-    [['news','NEWS',-7],['cv','CV',0],['press','PRESS',7]].forEach(n => {
+    [['news','NEWS',-8],['cv','CV',0],['press','PRESS',8]].forEach(n => {
       const s = makeTextSprite(n[1], '#f2f0e9', '#2647ff', 26);
-      s.position.set(n[2], 11, 0);
+      s.position.set(n[2], 1.1, 6);
       Object.assign(s.userData, { page:n[0], hover:false });
       scene.add(s); sprites.push(s);
     });
@@ -870,39 +870,73 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     }
   }
 
-  /* ---------- water drop sound (Web Audio, synthesized) ---------- */
-  let audioCtx = null;
+  /* ---------- water drop in space (Web Audio: drop + echo + reverb) ---------- */
+  let audioCtx = null, revIn = null, dlyIn = null;
+  function audioInit(){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const sr = audioCtx.sampleRate;
+
+    /* deep-space reverb: generated impulse response, long dark tail */
+    const conv = audioCtx.createConvolver();
+    const dur = 4.5;
+    const ir = audioCtx.createBuffer(2, sr * dur, sr);
+    for(let ch = 0; ch < 2; ch++){
+      const d = ir.getChannelData(ch);
+      for(let i = 0; i < d.length; i++)
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3.2);
+    }
+    conv.buffer = ir;
+    const rg = audioCtx.createGain(); rg.gain.value = 0.55;
+    conv.connect(rg).connect(audioCtx.destination);
+    revIn = conv;
+
+    /* cosmic echo: feedback delay, darkened each repeat */
+    const dly = audioCtx.createDelay(2); dly.delayTime.value = 0.38;
+    const fb  = audioCtx.createGain(); fb.gain.value = 0.45;
+    const lp  = audioCtx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 1200;
+    dly.connect(lp); lp.connect(fb); fb.connect(dly);
+    dly.connect(conv);
+    const dg = audioCtx.createGain(); dg.gain.value = 0.35;
+    dly.connect(dg).connect(audioCtx.destination);
+    dlyIn = dly;
+  }
   function plop(){
     try{
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if(!audioCtx) audioInit();
       if(audioCtx.state === 'suspended') audioCtx.resume();
       const t0 = audioCtx.currentTime;
 
-      /* drop: sine with falling pitch */
+      /* drop: deeper sine with falling pitch */
       const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      const f = 360 + Math.random() * 240;
+      const f = 240 + Math.random() * 180;
       o.frequency.setValueAtTime(f, t0);
-      o.frequency.exponentialRampToValueAtTime(f * 0.38, t0 + 0.17);
+      o.frequency.exponentialRampToValueAtTime(f * 0.35, t0 + 0.22);
       g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(0.2, t0 + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
-      o.connect(g).connect(audioCtx.destination);
-      o.start(t0); o.stop(t0 + 0.34);
+      g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.014);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.4);
+      o.connect(g);
+      g.connect(audioCtx.destination);   /* dry */
+      g.connect(dlyIn);                  /* echo */
+      g.connect(revIn);                  /* reverb */
+      o.start(t0); o.stop(t0 + 0.42);
 
-      /* splash: short band-passed noise tail */
-      const dur = 0.4, sr = audioCtx.sampleRate;
-      const buf = audioCtx.createBuffer(1, sr * dur, sr);
+      /* splash: soft noise, sent mostly into the reverb */
+      const nd = 0.35, sr = audioCtx.sampleRate;
+      const buf = audioCtx.createBuffer(1, sr * nd, sr);
       const d = buf.getChannelData(0);
       for(let i = 0; i < d.length; i++)
-        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.2);
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.4);
       const src = audioCtx.createBufferSource(); src.buffer = buf;
       const bp = audioCtx.createBiquadFilter();
       bp.type = 'bandpass';
-      bp.frequency.value = 850 + Math.random() * 600;
+      bp.frequency.value = 700 + Math.random() * 500;
       bp.Q.value = 1.1;
-      const ng = audioCtx.createGain(); ng.gain.value = 0.05;
-      src.connect(bp).connect(ng).connect(audioCtx.destination);
-      src.start(t0 + 0.012);
+      const ng = audioCtx.createGain(); ng.gain.value = 0.04;
+      src.connect(bp).connect(ng);
+      ng.connect(revIn);
+      ng.connect(audioCtx.destination);
+      src.start(t0 + 0.015);
     }catch(e){}
   }
 
