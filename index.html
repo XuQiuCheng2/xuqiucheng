@@ -940,6 +940,113 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     }catch(e){}
   }
 
+  /* ---------- little earths: fall, dent spacetime, vanish ---------- */
+  const balls = [];
+  const BALL_R = 1.5, BALL_LIFE = 15, WELL_DEPTH = 2.4, WELL_SIG = 2.8;
+
+  function earthTexture(){
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 128;
+    const x = c.getContext('2d');
+    x.fillStyle = '#2a5db0'; x.fillRect(0, 0, 256, 128);          /* ocean */
+    x.fillStyle = '#3f8f4f';                                       /* continents */
+    for(let i = 0; i < 24; i++){
+      x.beginPath();
+      x.ellipse(Math.random()*256, 14 + Math.random()*100,
+                5 + Math.random()*20, 3 + Math.random()*11,
+                Math.random()*3, 0, 7);
+      x.fill();
+    }
+    x.fillStyle = 'rgba(255,255,255,0.85)';                        /* clouds */
+    for(let i = 0; i < 10; i++){
+      x.beginPath();
+      x.ellipse(Math.random()*256, Math.random()*128,
+                8 + Math.random()*16, 2 + Math.random()*4,
+                0, 0, 7);
+      x.fill();
+    }
+    x.fillStyle = '#e8eef2';                                       /* ice caps */
+    x.fillRect(0, 0, 256, 8); x.fillRect(0, 120, 256, 8);
+    const t = new THREE.CanvasTexture(c);
+    t.minFilter = THREE.LinearFilter;
+    return t;
+  }
+
+  function spawnBall(x, z){
+    if(balls.length >= 8) balls[0].born = -1e9;   /* expire oldest */
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(BALL_R, 24, 18),
+      new THREE.MeshBasicMaterial({ map: earthTexture(), transparent:true })
+    );
+    mesh.position.set(x, 16, z);
+    mesh.rotation.z = 0.41;                        /* axial tilt */
+    scene.add(mesh);
+    balls.push({ mesh, x, z, y:16, vy:0, state:'fall', born:performance.now() });
+  }
+
+  function sampleH(x, z){
+    const i = Math.max(0, Math.min(N, Math.round((x + HALF) / STEP)));
+    const j = Math.max(0, Math.min(N, Math.round((z + HALF) / STEP)));
+    return h[idx(i, j)];
+  }
+
+  /* steady gravity well: blend field toward the dent without injecting waves */
+  function applyWell(x, z, strength){
+    const R = WELL_SIG * 2.6;
+    const i0 = Math.max(0, Math.floor((x + HALF - R) / STEP));
+    const i1 = Math.min(N, Math.ceil((x + HALF + R) / STEP));
+    const j0 = Math.max(0, Math.floor((z + HALF - R) / STEP));
+    const j1 = Math.min(N, Math.ceil((z + HALF + R) / STEP));
+    for(let j = j0; j <= j1; j++){
+      for(let i = i0; i <= i1; i++){
+        const gx = i * STEP - HALF, gz = j * STEP - HALF;
+        const d2 = (gx - x) * (gx - x) + (gz - z) * (gz - z);
+        const tgt = -WELL_DEPTH * strength * Math.exp(-d2 / (2 * WELL_SIG * WELL_SIG));
+        const p = idx(i, j);
+        h[p]     += (tgt - h[p])     * 0.06;
+        hPrev[p] += (tgt - hPrev[p]) * 0.06;
+      }
+    }
+  }
+
+  function updateBalls(dt){
+    const now = performance.now();
+    for(let k = balls.length - 1; k >= 0; k--){
+      const b = balls[k];
+      const age = (now - b.born) / 1000;
+
+      if(b.state === 'fall'){
+        b.vy -= 55 * dt;
+        b.y += b.vy * dt;
+        const surf = sampleH(b.x, b.z);
+        if(b.y <= surf + BALL_R){
+          b.y = surf + BALL_R;
+          b.state = 'rest';
+          poke(b.x, b.z, Math.min(6, -b.vy * 0.14));
+          plop();
+        }
+      } else if(age < BALL_LIFE){
+        applyWell(b.x, b.z, 1);
+        b.y = sampleH(b.x, b.z) + BALL_R * 0.82;   /* sits sunk into its well */
+      }
+
+      if(age > BALL_LIFE){
+        b.mesh.material.opacity -= dt * 1.6;       /* fade out, well releases */
+        if(b.mesh.material.opacity <= 0){
+          scene.remove(b.mesh);
+          b.mesh.geometry.dispose();
+          b.mesh.material.map.dispose();
+          b.mesh.material.dispose();
+          balls.splice(k, 1);
+          continue;
+        }
+      }
+
+      b.mesh.rotation.y += 0.5 * dt;               /* slow spin */
+      b.mesh.position.set(b.x, b.y, b.z);
+    }
+  }
+
   /* ---------- input: orbit / zoom / click ---------- */
   function bindInput(el){
     el.addEventListener('pointerdown', e => {
@@ -974,7 +1081,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
         else if(hit && hit.userData.action === 'reset'){ theta = 0.65; phi = 1.05; distTarget = 105; }
         else {
           const pt = pickGround(e.clientX, e.clientY);
-          if(pt){ poke(pt.x, pt.z, 4.2); plop(); }
+          if(pt) spawnBall(pt.x, pt.z);
         }
       }
     });
@@ -1018,9 +1125,12 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
   }
 
   /* ---------- loop ---------- */
+  let lastT = 0;
   function frame(t){
     if(!running) return;
     rafId = requestAnimationFrame(frame);
+    const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016;
+    lastT = t;
 
     if(!dragging && performance.now() - lastInteract > 3000) theta += 0.0006;
     dist += (distTarget - dist) * 0.045;
@@ -1033,6 +1143,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     camera.lookAt(target);
 
     stepWave();
+    updateBalls(dt);
     updateGridPositions();
     scene.children.forEach(c => {
       if(c.isLineSegments) c.geometry.attributes.position.needsUpdate = true;
@@ -1059,7 +1170,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     renderer.render(gizmoScene, gizmoCam);
     renderer.setScissorTest(false);
   }
-  function startLoop(){ if(!running){ running = true; rafId = requestAnimationFrame(frame); } }
+  function startLoop(){ if(!running){ running = true; lastT = 0; rafId = requestAnimationFrame(frame); } }
   function stopLoop(){ running = false; if(rafId) cancelAnimationFrame(rafId); }
 
   /* ================================================================
