@@ -655,7 +655,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     {page:'burning',   title:'燃える心',                       t:2023.0, s:-20},
     {page:'spaceship', title:'宇宙船イン・ビトゥイーン号の窓', t:2023.5, s:22},
     {page:'saitama',   title:'夢をみる、さいたま',             t:2024.0, s:-2},
-    {page:'pbd',       title:'ペイル・ブルー・ドット',         t:2024.6, s:26},
+    {page:'pbd',       title:'ペイル・ブルー・ドット',         t:2024.6, s:18},
     {page:'ripples',   title:'さざ波：200年後の大地震',        t:2025.0, s:30}
   ];
 
@@ -718,21 +718,37 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     axes.forEach(a => {
       const from = new THREE.Vector3(...a.from), to = new THREE.Vector3(...a.to);
       const dir = to.clone().sub(from), len = dir.length();
+      const dirN = dir.clone().normalize();
       const cyl = new THREE.Mesh(
         new THREE.CylinderGeometry(AXR, AXR, len, 10),
         new THREE.MeshBasicMaterial({ color:a.col })
       );
       cyl.position.copy(from).add(to).multiplyScalar(0.5);
-      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dirN);
       scene.add(cyl);
+
+      /* arrowhead at the positive end */
+      const cone = new THREE.Mesh(
+        new THREE.ConeGeometry(0.42, 1.5, 12),
+        new THREE.MeshBasicMaterial({ color:a.col })
+      );
+      cone.position.copy(to).add(dirN.clone().multiplyScalar(0.7));
+      cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dirN);
+      scene.add(cone);
+
       const s = makeTextSprite(a.label, '#' + a.col.toString(16).padStart(6,'0'), null, 26);
       s.position.set(...a.at);
       scene.add(s);
     });
 
-    /* ---------- floating works: positioned by time (X) & space (Y) ---------- */
-    const T0 = 2019.4, T1 = 2025.3;
-    const mapT = t => -30 + (t - T0) / (T1 - T0) * 60;
+    /* ---------- floating works: X = time (2022 at the origin), height = recency ---------- */
+    const T0 = 2019.4, T1 = 2025.3, PIVOT = 2022;
+    /* 2022 年 = 原点：それ以前は名前の手前（-X）、以降は先（+X） */
+    const mapT = t => t >= PIVOT
+      ? (t - PIVOT) / (T1 - PIVOT) * 30
+      : (t - PIVOT) / (PIVOT - T0) * 30;
+    /* 新しい作品ほど高く（Z 軸方向） */
+    const mapH = t => 4 + (t - T0) / (T1 - T0) * 15;
     /* 减淡仅适用于 2022 年以前的作品；2022 年以降 = 完全不透明 */
     const FADE_UNTIL = 2022;
     const mapFade = t => t >= FADE_UNTIL
@@ -742,7 +758,8 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     WORKS.forEach((w, i) => {
       const fade = mapFade(w.t);
       const sp = makeTextSprite(w.title, '#f2f0e9', '#2647ff', 34);
-      sp.position.set(mapT(w.t), 6 + (i % 5) * 2, w.s);
+      /* 交互に ±1.1 ずらして写真同士の重なりを避ける（上昇トレンドは維持） */
+      sp.position.set(mapT(w.t), mapH(w.t) + (i % 2 ? 1.1 : -1.1), w.s);
       sp.material.opacity = fade;
       Object.assign(sp.userData, { page:w.page, baseY:sp.position.y, seed:i * 1.7, hover:false, fade });
       scene.add(sp);
