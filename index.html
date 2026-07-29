@@ -392,6 +392,33 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
   <!-- ============ PRESS ============ -->
   <section class="page" id="press">
     <h1>PRESS</h1>
+
+    <div class="list-block">
+      <h2>記事・レビュー</h2>
+      <div class="row"><span class="year">2026</span><span><a href="https://note.com/editroom/n/na4b86a22ba3d" target="_blank" rel="noopener noreferrer">Edit Room（note）— 徐秋成「また行ってはいけないところにたどり着いた」Edit Room 第2回展覧会</a></span></div>
+      <div class="row"><span class="year">2026</span><span><a href="https://niewmedia.com/specials/2601saitamabonsai_edsbt_wrksg/" target="_blank" rel="noopener noreferrer">NiEW — 大宮盆栽美術館でVRゲームを体験レポ。ベッドタウン・さいたまの潜在意識に向き合う</a></span></div>
+      <div class="row"><span class="year">2025</span><span><a href="https://prtimes.jp/main/html/rd/p/000000249.000140218.html" target="_blank" rel="noopener noreferrer">PR TIMES — さいたま市大宮盆栽美術館でVRゲーム作品を体験（プレスリリース）</a></span></div>
+      <div class="row"><span class="year">2024</span><span><a href="https://www.tamabi.ac.jp/works/23584/" target="_blank" rel="noopener noreferrer">多摩美術大学 — 卒業制作優秀作品集2023《燃える心 / Burnning With Fire》担当教員：谷口暁彦</a></span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>展覧会・公演</h2>
+      <div class="row"><span class="year">2025</span><span><a href="https://www.tokyoartbeat.com/events/-/Xu-Qiucheng-Exhibition/edit-room/2025-12-10" target="_blank" rel="noopener noreferrer">Tokyo Art Beat — Xu Qiucheng Exhibition（Edit Room, 2025.12.10–12.20）</a></span></div>
+      <div class="row"><span class="year">2025</span><span><a href="https://bug.art/exhibition/bug-art-award-3/finalists/" target="_blank" rel="noopener noreferrer">BUG（リクルートアートセンター）— 第3回 BUG Art Award ファイナリスト展《さざ波：200年後の大地震》</a></span></div>
+      <div class="row"><span class="year">2025</span><span><a href="https://artscouncil-saitama.jp/programs/imaginationsaitama2025/" target="_blank" rel="noopener noreferrer">アーツカウンシルさいたま — 「空想するさいたま」入選作品《夢をみる、さいたま、仮に》大宮盆栽美術館にて展示</a></span></div>
+      <div class="row"><span class="year">2023</span><span><a href="https://chelfitsch.net/activity/2023/06/in-between.html?act=kichijoji" target="_blank" rel="noopener noreferrer">チェルフィッチュ — 岡田利規『宇宙船イン・ビトゥイーン号の窓』東京公演（吉祥寺シアター）出演</a></span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>受賞</h2>
+      <div class="row"><span class="year">2023</span><span><a href="https://adaa.jp/ja/winners/winners2023.html" target="_blank" rel="noopener noreferrer">アジアデジタルアート大賞展FUKUOKA — 学生／動画部門 大賞・文部科学大臣賞《燃える心》</a></span></div>
+    </div>
+
+    <div class="list-block">
+      <h2>映像・インタビュー</h2>
+      <div class="row"><span class="year">2025</span><span><a href="https://www.youtube.com/watch?v=kU_9_DPYhVw" target="_blank" rel="noopener noreferrer">第3回 BUG Art Award ファイナリスト インタビュー動画（YouTube）</a></span></div>
+      <div class="row"><span class="year">2022</span><span><a href="https://www.xiaoyuzhoufm.com/podcast/60d0affd627bf79c51e34dab" target="_blank" rel="noopener noreferrer">Podcast「纱拂缨」EP7 来自河南 — 河南での記憶、インスタレーションとパフォーマンスについて（中国語・34min）</a></span></div>
+    </div>
   </section>
 
   <!-- ============ RIPPLES ============ -->
@@ -757,7 +784,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     const texLoader = new THREE.TextureLoader();
     WORKS.forEach((w, i) => {
       const fade = mapFade(w.t);
-      const sp = makeTextSprite(w.title, '#f2f0e9', '#2647ff', 34);
+      const sp = makeTextSprite(w.title, '#f2f0e9', '#ff9d2c', 34);
       /* 交互に ±1.1 ずらして写真同士の重なりを避ける（上昇トレンドは維持） */
       sp.position.set(mapT(w.t), mapH(w.t) + (i % 2 ? 1.1 : -1.1), w.s);
       sp.material.opacity = fade;
@@ -779,16 +806,32 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
         sp.userData.img = im;
         scene.add(im);
         sprites.push(im);
+
+        /* Blender-style orange selection outline for the photo */
+        const oc = document.createElement('canvas');
+        oc.width = 256; oc.height = Math.max(8, Math.round(256 * IH / IW));
+        const octx = oc.getContext('2d');
+        octx.strokeStyle = '#ff9d2c';
+        octx.lineWidth = 10;
+        octx.strokeRect(5, 5, oc.width - 10, oc.height - 10);
+        const otex = new THREE.CanvasTexture(oc);
+        otex.minFilter = THREE.LinearFilter;
+        const ol = new THREE.Sprite(new THREE.SpriteMaterial({ map:otex, transparent:true, fog:false }));
+        ol.scale.set(IW * 1.05, IH * 1.05, 1);
+        ol.position.copy(im.position);
+        ol.visible = false;
+        im.userData.outline = ol;
+        scene.add(ol);
       });
     });
 
     /* ---------- name right at the axis intersection ---------- */
-    const nameEn = makeTextSprite('Xu Qiu Cheng', '#f2f0e9', '#2647ff', 80, 800);
+    const nameEn = makeTextSprite('Xu Qiu Cheng', '#f2f0e9', '#ff9d2c', 80, 800);
     nameEn.position.set(0, 3.2, 0);
     Object.assign(nameEn.userData, { action:'reset', hover:false });
     scene.add(nameEn); sprites.push(nameEn);
 
-    const nameZh = makeTextSprite('徐 秋 成', '#f2f0e9', '#2647ff', 58, 800);
+    const nameZh = makeTextSprite('徐 秋 成', '#f2f0e9', '#ff9d2c', 58, 800);
     nameZh.position.set(0, 1.0, 0);
     Object.assign(nameZh.userData, { action:'reset', hover:false });
     scene.add(nameZh); sprites.push(nameZh);
@@ -815,13 +858,8 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       ctx.clearRect(0, 0, c.width, c.height);
       ctx.font = wt + ' ' + fs + 'px "IBM Plex Mono", monospace';
       ctx.textBaseline = 'middle';
-      if(hover){
-        ctx.fillStyle = colHover;
-        ctx.fillRect(0, 0, tw + pad * 2, fs + pad * 2);
-        ctx.fillStyle = '#f2f0e9';
-      } else {
-        ctx.fillStyle = colNormal;
-      }
+      /* hover = Blender selected-object orange */
+      ctx.fillStyle = hover ? (colHover || colNormal) : colNormal;
       ctx.fillText(text, pad, (fs + pad * 2) / 2 + 1);
     }
     draw(false);
@@ -1090,6 +1128,8 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
               s.material.opacity = on ? 1 : s.userData.fade;
               if(s.userData.img) s.userData.img.material.opacity = on ? 1 : s.userData.img.userData.fade;
             }
+            if(s.userData.img && s.userData.img.userData.outline)
+              s.userData.img.userData.outline.visible = on;
           }
         });
         el.classList.toggle('pick', !!hit);
@@ -1175,7 +1215,11 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     sprites.forEach(s => {
       if(s.userData.baseY === undefined) return;
       s.position.y = s.userData.baseY + Math.sin(t * 0.001 + s.userData.seed) * 0.5;
-      if(s.userData.img) s.userData.img.position.y = s.position.y + s.userData.img.userData.off;
+      if(s.userData.img){
+        s.userData.img.position.y = s.position.y + s.userData.img.userData.off;
+        if(s.userData.img.userData.outline)
+          s.userData.img.userData.outline.position.y = s.userData.img.position.y;
+      }
     });
 
     renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
