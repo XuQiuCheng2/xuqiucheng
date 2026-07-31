@@ -179,7 +179,8 @@
   /* ---------- 3D home ---------- */
   #three-home{
     position:fixed;
-    inset:0;
+    left:0; right:0;
+    top:64vh; bottom:0;
     z-index:1;
     display:none;
     cursor:grab;
@@ -189,6 +190,40 @@
   #three-home.dragging{cursor:grabbing;}
   #three-home.pick{cursor:pointer;}
   body.mode-3d #home{display:none;}
+
+  /* ---------- viewer (top two thirds) ---------- */
+  #viewer{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:64vh;
+    z-index:3;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+  body.mode-3d #viewer{display:flex;}
+  #viewer img{
+    max-width:76vw;
+    max-height:calc(64vh - 96px);
+    object-fit:contain;
+    opacity:0;
+    transition:opacity .4s ease;
+  }
+  #viewer img.on{opacity:1;}
+  #viewer-cap{
+    position:absolute;
+    left:50%;
+    bottom:20px;
+    transform:translateX(-50%);
+    font-size:12px;
+    letter-spacing:.08em;
+    color:#f2f0e9;
+    opacity:0;
+    transition:opacity .4s ease;
+    white-space:nowrap;
+  }
+  #viewer-cap.on{opacity:.75;}
   #three-hint{
     position:fixed;
     left:20px;
@@ -201,6 +236,7 @@
     user-select:none;
     pointer-events:none;
   }
+  body.mode-3d{background:#393939;}
   body.mode-3d #three-hint{display:block;}
   body.mode-3d .site-head{display:none;}
   body.mode-3d #contact{color:#f2f0e9;}
@@ -625,6 +661,10 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 
 <div id="grid-overlay"></div>
 <div id="cursor-sq"></div>
+<div id="viewer">
+  <img id="viewer-img" alt="">
+  <div id="viewer-cap"></div>
+</div>
 <div id="three-home"></div>
 <div id="axis-nav">
   <a href="#news"  data-page="news"  class="n-x">NEWS</a>
@@ -694,24 +734,29 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 
   /* camera orbit state — starts far (axes overview), glides in */
   const target = new THREE.Vector3(0, 5, 0);
-  let theta = 0.65, phi = 1.05, dist = 165, distTarget = 105;
+  let theta = 0.65, phi = 1.30, dist = 200, distTarget = 132;
   let dragging = false, moved = 0, px = 0, py = 0, pinchD = 0;
   let lastInteract = 0;
 
   function idx(i, j){ return j * (N + 1) + i; }
 
+  /* 3D canvas occupies the bottom third of the window */
+  const VIEW_FRAC = 0.36;
+  const cw = () => window.innerWidth;
+  const ch = () => Math.round(window.innerHeight * VIEW_FRAC);
+
   function init3D(){
     const holder = document.getElementById('three-home');
     renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(cw(), ch());
     renderer.setClearColor(DARK);
     holder.appendChild(renderer.domElement);
 
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog(DARK, 90, 220);
 
-    camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 500);
+    camera = new THREE.PerspectiveCamera(42, cw() / ch(), 0.1, 500);
     raycaster = new THREE.Raycaster();
 
     /* ---------- elastic grid (height field + line segments) ---------- */
@@ -781,48 +826,15 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     const mapFade = t => t >= FADE_UNTIL
       ? 1
       : 0.42 + 0.58 * Math.min(1, Math.max(0, (t - T0) / (FADE_UNTIL - T0)));
-    const texLoader = new THREE.TextureLoader();
     WORKS.forEach((w, i) => {
       const fade = mapFade(w.t);
       const sp = makeTextSprite(w.title, '#f2f0e9', '#ff9d2c', 34);
-      /* 交互に ±1.1 ずらして写真同士の重なりを避ける（上昇トレンドは維持） */
+      /* 交互に ±1.1 ずらして重なりを避ける（上昇トレンドは維持） */
       sp.position.set(mapT(w.t), mapH(w.t) + (i % 2 ? 1.1 : -1.1), w.s);
       sp.material.opacity = fade;
-      Object.assign(sp.userData, { page:w.page, baseY:sp.position.y, seed:i * 1.7, hover:false, fade });
+      Object.assign(sp.userData, { page:w.page, title:w.title, baseY:sp.position.y, seed:i * 1.7, hover:false, fade });
       scene.add(sp);
       sprites.push(sp);
-
-      texLoader.load('images/' + w.page + '-main.jpg', tex => {
-        tex.minFilter = THREE.LinearFilter;
-        const im = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, fog:false, transparent:true, opacity:fade }));
-        const IW = 8, IH = IW * tex.image.height / tex.image.width;
-        im.scale.set(IW, IH, 1);
-        im.position.copy(sp.position);
-        Object.assign(im.userData, {
-          page:w.page, pairText:sp, fade,
-          off: sp.scale.y / 2 + IH / 2 + 0.6
-        });
-        im.position.y += im.userData.off;
-        sp.userData.img = im;
-        scene.add(im);
-        sprites.push(im);
-
-        /* Blender-style orange selection outline for the photo */
-        const oc = document.createElement('canvas');
-        oc.width = 256; oc.height = Math.max(8, Math.round(256 * IH / IW));
-        const octx = oc.getContext('2d');
-        octx.strokeStyle = '#ff9d2c';
-        octx.lineWidth = 10;
-        octx.strokeRect(5, 5, oc.width - 10, oc.height - 10);
-        const otex = new THREE.CanvasTexture(oc);
-        otex.minFilter = THREE.LinearFilter;
-        const ol = new THREE.Sprite(new THREE.SpriteMaterial({ map:otex, transparent:true, fog:false }));
-        ol.scale.set(IW * 1.05, IH * 1.05, 1);
-        ol.position.copy(im.position);
-        ol.visible = false;
-        im.userData.outline = ol;
-        scene.add(ol);
-      });
     });
 
     /* ---------- name right at the axis intersection ---------- */
@@ -837,6 +849,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     scene.add(nameZh); sprites.push(nameZh);
 
     buildGizmo();
+    showInViewer(WORKS[WORKS.length - 1].page, WORKS[WORKS.length - 1].title);
 
     bindInput(renderer.domElement);
     window.addEventListener('resize', onResize);
@@ -854,13 +867,21 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     c.height = (fs + pad * 2) * dpr;
 
     function draw(hover){
+      const w = tw + pad * 2, hgt = fs + pad * 2;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, c.width, c.height);
       ctx.font = wt + ' ' + fs + 'px "IBM Plex Mono", monospace';
       ctx.textBaseline = 'middle';
-      /* hover = Blender selected-object orange */
-      ctx.fillStyle = hover ? (colHover || colNormal) : colNormal;
-      ctx.fillText(text, pad, (fs + pad * 2) / 2 + 1);
+      /* hover = Blender selected-object orange: text + outline box */
+      const hc = colHover || colNormal;
+      if(hover && colHover){
+        ctx.strokeStyle = hc;
+        ctx.lineWidth = Math.max(2, fs * 0.06);
+        ctx.strokeRect(ctx.lineWidth / 2, ctx.lineWidth / 2,
+                       w - ctx.lineWidth, hgt - ctx.lineWidth);
+      }
+      ctx.fillStyle = hover ? hc : colNormal;
+      ctx.fillText(text, pad, hgt / 2 + 1);
     }
     draw(false);
 
@@ -871,6 +892,26 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     sp.scale.set(c.width / dpr / k, c.height / dpr / k, 1);
     sp.userData.setHover = on => { draw(on); tex.needsUpdate = true; };
     return sp;
+  }
+
+  /* ---------- top viewer ---------- */
+  const vImg = document.getElementById('viewer-img');
+  const vCap = document.getElementById('viewer-cap');
+  let vCurrent = null;
+  function showInViewer(page, title){
+    if(vCurrent === page) return;
+    vCurrent = page;
+    vImg.classList.remove('on');
+    vCap.classList.remove('on');
+    const next = new Image();
+    next.onload = () => {
+      if(vCurrent !== page) return;
+      vImg.src = next.src;
+      vImg.classList.add('on');
+      vCap.textContent = title;
+      vCap.classList.add('on');
+    };
+    next.src = 'images/' + page + '-main.jpg';
   }
 
   /* ---------- corner navigation gizmo (Blender style) ---------- */
@@ -1117,21 +1158,16 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
         px = e.clientX; py = e.clientY;
       } else {
         const hit = pickSprite(e.clientX, e.clientY);
-        const hitText = hit ? (hit.userData.pairText || hit) : null;
         sprites.forEach(s => {
           if(!s.userData.setHover) return;
-          const on = s === hitText;
+          const on = s === hit;
           if(on !== s.userData.hover){
             s.userData.hover = on;
             s.userData.setHover(on);
-            if(s.userData.fade !== undefined){
-              s.material.opacity = on ? 1 : s.userData.fade;
-              if(s.userData.img) s.userData.img.material.opacity = on ? 1 : s.userData.img.userData.fade;
-            }
-            if(s.userData.img && s.userData.img.userData.outline)
-              s.userData.img.userData.outline.visible = on;
+            if(s.userData.fade !== undefined) s.material.opacity = on ? 1 : s.userData.fade;
           }
         });
+        if(hit && hit.userData.title) showInViewer(hit.userData.page, hit.userData.title);
         el.classList.toggle('pick', !!hit);
         document.body.classList.toggle('hovering', !!hit);
       }
@@ -1141,7 +1177,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       if(moved < 6){
         const hit = pickSprite(e.clientX, e.clientY);
         if(hit && hit.userData.page){ location.hash = hit.userData.page; show(hit.userData.page); }
-        else if(hit && hit.userData.action === 'reset'){ theta = 0.65; phi = 1.05; distTarget = 105; }
+        else if(hit && hit.userData.action === 'reset'){ theta = 0.65; phi = 1.30; distTarget = 132; }
         else {
           const pt = pickGround(e.clientX, e.clientY);
           if(pt) spawnBall(pt.x, pt.z);
@@ -1165,7 +1201,8 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
   }
 
   function ndc(x, y){
-    return new THREE.Vector2((x / window.innerWidth) * 2 - 1, -(y / window.innerHeight) * 2 + 1);
+    const r = renderer.domElement.getBoundingClientRect();
+    return new THREE.Vector2(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1);
   }
   function pickSprite(x, y){
     raycaster.setFromCamera(ndc(x, y), camera);
@@ -1182,9 +1219,9 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
 
   function onResize(){
     if(!three_ok) return;
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = cw() / ch();
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(cw(), ch());
   }
 
   /* ---------- loop ---------- */
@@ -1215,21 +1252,16 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     sprites.forEach(s => {
       if(s.userData.baseY === undefined) return;
       s.position.y = s.userData.baseY + Math.sin(t * 0.001 + s.userData.seed) * 0.5;
-      if(s.userData.img){
-        s.userData.img.position.y = s.position.y + s.userData.img.userData.off;
-        if(s.userData.img.userData.outline)
-          s.userData.img.userData.outline.position.y = s.userData.img.position.y;
-      }
     });
 
-    renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+    renderer.setViewport(0, 0, cw(), ch());
     renderer.render(scene, camera);
 
     /* gizmo pass — top right */
-    const GS = window.innerWidth < 720 ? 72 : 94;
+    const GS = window.innerWidth < 720 ? 64 : 84;
     renderer.setScissorTest(true);
-    renderer.setViewport(window.innerWidth - GS - 14, window.innerHeight - GS - 14, GS, GS);
-    renderer.setScissor(window.innerWidth - GS - 14, window.innerHeight - GS - 14, GS, GS);
+    renderer.setViewport(cw() - GS - 14, ch() - GS - 14, GS, GS);
+    renderer.setScissor(cw() - GS - 14, ch() - GS - 14, GS, GS);
     renderer.clearDepth();
     gizmoCam.position.copy(camera.position).sub(target).normalize().multiplyScalar(8);
     gizmoCam.up.copy(camera.up);
