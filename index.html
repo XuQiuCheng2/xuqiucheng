@@ -405,6 +405,7 @@
   <!-- ============ HOME ============ -->
   <section class="page on" id="home">
     <div class="grid">
+      <a href="#alien" data-page="alien" class="thumb"><img src="images/alien-main.jpg" alt="東京に宇宙人があらわれる"><span>東京に宇宙人があらわれる</span></a>
       <a href="#ripples" data-page="ripples" class="thumb"><img src="images/ripples-main.jpg" alt="さざ波：200年後の大地震"><span>さざ波：200年後の大地震</span></a>
       <a href="#pbd" data-page="pbd" class="thumb"><img src="images/pbd-main.jpg" alt="ペイル・ブルー・ドット"><span>ペイル・ブルー・ドット</span></a>
       <a href="#saitama" data-page="saitama" class="thumb"><img src="images/saitama-main.jpg" alt="夢をみる、さいたま"><span>夢をみる、さいたま</span></a>
@@ -425,6 +426,7 @@
     <h1>NEWS</h1>
     <div class="meta">Recent and upcoming</div>
     <div class="list-block">
+      <div class="row"><span class="year">2026</span><span>演劇ワークショップ「東京に宇宙人があらわれる vol.1」開催（アートセンターBUG、9/5–6）参加者募集中・経験不問</span></div>
       <div class="row"><span class="year">2025</span><span>「夢をみる、さいたま、仮に」2025年度さいたま文化発信プロジェクト選出、大宮盆栽美術館にて展示</span></div>
       <div class="row"><span class="year">2025</span><span>BugArtAward ファイナリスト展</span></div>
       <div class="row"><span class="year">2025</span><span>チェルフィッチュ『宇宙船イン・ビトゥイーン号の窓』日本国内ツアー（三重、熊本、豊岡演劇祭）</span></div>
@@ -510,6 +512,21 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
       <div class="row"><span class="year">2025</span><span><a href="https://www.youtube.com/watch?v=kU_9_DPYhVw" target="_blank" rel="noopener noreferrer">第3回 BUG Art Award ファイナリスト インタビュー動画（YouTube）</a></span></div>
       <div class="row"><span class="year">2022</span><span><a href="https://www.xiaoyuzhoufm.com/podcast/60d0affd627bf79c51e34dab" target="_blank" rel="noopener noreferrer">Podcast「纱拂缨」EP7 来自河南 — 河南での記憶、インスタレーションとパフォーマンスについて（中国語・34min）</a></span></div>
     </div>
+  </section>
+
+  <!-- ============ ALIEN ============ -->
+  <section class="page" id="alien">
+    <h1>ALIENS APPEAR IN TOKYO　東京に宇宙人があらわれる vol.1</h1>
+    <div class="meta">演劇ワークショップ / 2026.09.05–06（土日）14:00–17:00
+場所：アートセンターBUG（JR東京駅八重洲南口直結）
+企画・進行：徐秋成　助成：一般財団法人 川村文化芸術振興財団
+参加者募集中・経験不問</div>
+    <div class="media"><img src="images/alien-main.jpg" alt="東京に宇宙人があらわれる vol.1 フライヤー"></div>
+    <p class="desc">　日本で生活している、日本語が母語ではないみなさんへ。
+
+　自分なりの日本語と身体を通して、自分なりの〈日本〉を一緒に考えてみましょう。
+
+　母語ではない言葉を話すとき、私たちはいつも少しだけ「宇宙人」になる。うまく言えないもどかしさの一方で、意味の重みから自由になる瞬間もある。このワークショップでは、その両義的な感覚を出発点に、言葉と身体のあいだで何が起きているのかを、参加者それぞれのやり方で探っていく。演劇経験は問わない。</p>
   </section>
 
   <!-- ============ RIPPLES ============ -->
@@ -782,7 +799,8 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     {page:'spaceship', title:'宇宙船イン・ビトゥイーン号の窓', t:2023.5, s:22},
     {page:'saitama',   title:'夢をみる、さいたま',             t:2024.0, s:-2},
     {page:'pbd',       title:'ペイル・ブルー・ドット',         t:2024.6, s:18},
-    {page:'ripples',   title:'さざ波：200年後の大地震',        t:2025.0, s:30}
+    {page:'ripples',   title:'さざ波：200年後の大地震',        t:2025.0, s:30},
+    {page:'alien',     title:'東京に宇宙人があらわれる',       t:2026.7, s:-30}
   ];
 
   const PAPER = 0xf2f0e9, INK = 0x2647ff, DARK = 0x393939, GRIDCOL = 0x9a9a9a;
@@ -873,7 +891,7 @@ Media artist and stage performer based in Tokyo. His practice spans video instal
     });
 
     /* ---------- floating works: X = time (2022 at the origin), height = recency ---------- */
-    const T0 = 2019.4, T1 = 2025.3, PIVOT = 2022;
+    const T0 = 2019.4, T1 = 2026.9, PIVOT = 2022;
     /* 2022 年 = 原点：それ以前は名前の手前（-X）、以降は先（+X） */
     const mapT = t => t >= PIVOT
       ? (t - PIVOT) / (T1 - PIVOT) * 30
